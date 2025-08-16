@@ -1,0 +1,4 @@
+fcd() {
+  local dir
+  dir=$(find . -type d \( -name .git -prune -o -name node_modules -prune \) -o -type d -print 2>/dev/null | fzf +m) && cd "$dir"
+}
