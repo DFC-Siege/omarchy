@@ -9,3 +9,5 @@
 !shell/**
 !fastfetch/
 !fastfetch/**
+!starship/
+!starship/**

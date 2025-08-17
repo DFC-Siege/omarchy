@@ -1,3 +1,4 @@
 alias lg='lazygit'
 alias zen='zen-browser'
 alias v='nvim'
+alias here='nautilus'

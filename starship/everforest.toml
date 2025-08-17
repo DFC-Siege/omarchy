@@ -1,0 +1,48 @@
+format = """
+[](fg:#dbbc7f)$username[](bg:#7fbbb3 fg:#dbbc7f)$directory[](fg:#7fbbb3 bg:#e67e80)$git_branch$git_status[](fg:#e67e80 bg:#d699b6)$time[ ](fg:#d699b6)"""
+
+[username]
+show_always = true
+style_user = "bg:#dbbc7f"
+style_root = "bg:#dbbc7f"
+format = '[$user ]($style)'
+disabled = false
+
+[directory]
+style = "bg:#7fbbb3"
+format = "[ $path ]($style)"
+truncation_length = 3
+truncation_symbol = "…/"
+
+[directory.substitutions]
+"Documents" = "󰈙 "
+"Downloads" = " "
+"Music" = " "
+"Pictures" = " "
+
+[git_branch]
+symbol = ""
+style = "bg:#e67e80"
+format = '[[ $symbol $branch ](bg:#e67e80)]($style)'
+
+[git_status]
+style = "bg:#e67e80"
+format = '[[($all_status$ahead_behind )](bg:#e67e80)]($style)'
+
+[time]
+disabled = false
+time_format = "%R"
+style = "bg:#d699b6"
+format = '[[  $time ](bg:#d699b6)]($style)'
+
+[line_break]
+disabled = false
+
+[character]
+disabled = false
+success_symbol = '[](bold fg:#a7c080)'
+error_symbol = '[](bold fg:#e67e80)'
+vimcmd_symbol = '[](bold fg:#a7c080)'
+vimcmd_replace_one_symbol = '[](bold fg:)'
+vimcmd_replace_symbol = '[](bold fg:)'
+vimcmd_visual_symbol = '[](bold fg:#dbbc7f)'
