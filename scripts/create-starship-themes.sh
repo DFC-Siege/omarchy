@@ -1,5 +1,4 @@
 #!/bin/bash
-
 THEMES_DIR="$HOME/.config/omarchy/themes"
 
 extract_color() {
@@ -55,12 +54,12 @@ format = """
 show_always = true
 style_user = "bg:${yellow}"
 style_root = "bg:${yellow}"
-format = '[\$user ](\$style)'
+format = '[\$user ](bg:${yellow} fg:${black})'
 disabled = false
 
 [directory]
 style = "bg:${blue}"
-format = "[ \$path ](\$style)"
+format = "[ \$path ](bg:${blue} fg:${black})"
 truncation_length = 3
 truncation_symbol = "…/"
 
@@ -73,17 +72,17 @@ truncation_symbol = "…/"
 [git_branch]
 symbol = ""
 style = "bg:${red}"
-format = '[[ \$symbol \$branch ](bg:${red})](\$style)'
+format = '[[ \$symbol \$branch ](bg:${red} fg:${black})](\$style)'
 
 [git_status]
 style = "bg:${red}"
-format = '[[(\$all_status\$ahead_behind )](bg:${red})](\$style)'
+format = '[[(\$all_status\$ahead_behind )](bg:${red} fg:${black})](\$style)'
 
 [time]
 disabled = false
 time_format = "%R"
 style = "bg:${magenta}"
-format = '[[  \$time ](bg:${magenta})](\$style)'
+format = '[[  \$time ](bg:${magenta} fg:${black})](\$style)'
 
 [line_break]
 disabled = false

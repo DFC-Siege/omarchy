@@ -5,12 +5,12 @@ format = """
 show_always = true
 style_user = "bg:#dbbc7f"
 style_root = "bg:#dbbc7f"
-format = '[$user ]($style)'
+format = '[$user ](bg:#dbbc7f fg:#475258)'
 disabled = false
 
 [directory]
 style = "bg:#7fbbb3"
-format = "[ $path ]($style)"
+format = "[ $path ](bg:#7fbbb3 fg:#475258)"
 truncation_length = 3
 truncation_symbol = "…/"
 
@@ -23,17 +23,17 @@ truncation_symbol = "…/"
 [git_branch]
 symbol = ""
 style = "bg:#e67e80"
-format = '[[ $symbol $branch ](bg:#e67e80)]($style)'
+format = '[[ $symbol $branch ](bg:#e67e80 fg:#475258)]($style)'
 
 [git_status]
 style = "bg:#e67e80"
-format = '[[($all_status$ahead_behind )](bg:#e67e80)]($style)'
+format = '[[($all_status$ahead_behind )](bg:#e67e80 fg:#475258)]($style)'
 
 [time]
 disabled = false
 time_format = "%R"
 style = "bg:#d699b6"
-format = '[[  $time ](bg:#d699b6)]($style)'
+format = '[[  $time ](bg:#d699b6 fg:#475258)]($style)'
 
 [line_break]
 disabled = false
