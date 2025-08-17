@@ -7,3 +7,5 @@
 !scripts/**
 !shell/
 !shell/**
+!fastfetch/
+!fastfetch/**

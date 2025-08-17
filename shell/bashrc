@@ -36,6 +36,13 @@ if command -v starship &>/dev/null; then
   eval "$(starship init bash)"
 fi
 
+# Run Fastfetch if available and not using starship for the prompt (optional logic)
+# You might want to run fastfetch always, or only when starship is not active.
+# This example runs it always if available.
+if command -v fastfetch &>/dev/null; then
+  fastfetch
+fi
+
 # Load local customizations if they exist
 if [ -f ~/.config/shell/local ]; then
   source ~/.config/shell/local
