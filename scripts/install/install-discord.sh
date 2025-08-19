@@ -1,7 +1,5 @@
 #!/bin/bash
 
-set -e
-
 SCRIPT_NAME="Discord Installer"
 DOWNLOAD_URL="https://discord.com/api/download?platform=linux&format=deb"
 TEMP_DIR="/tmp"

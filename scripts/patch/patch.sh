@@ -1,0 +1,15 @@
+#!/bin/bash
+
+set -e
+cd "$(dirname "$0")" || exit 1
+
+echo "Running all patchers"
+
+for script in ./*; do
+  if [ -f "$script" ] && [ "$(basename "$script")" != "patch.sh" ]; then
+    echo "  Executing: $(basename "$script")"
+    sh "$script"
+  fi
+done
+
+echo "Patching done"
