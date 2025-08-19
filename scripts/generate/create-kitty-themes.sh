@@ -108,6 +108,7 @@ convert_alacritty_to_kitty() {
     echo "inactive_tab_background ${black_color}"
     echo "inactive_tab_foreground ${fg_color}"
     echo "confirm_os_window_close 0"
+    echo "window_padding_width 8 8 8 8"
   } >>"$kitty_file"
 }
 

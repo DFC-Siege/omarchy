@@ -1,5 +1,5 @@
 alias lg='lazygit'
 alias zen='zen-browser'
 alias v='nvim'
-alias here='nautilus'
+alias here='nohup nautilus . &> /dev/null &'
 alias yee='yeelight-cli'
