@@ -19,88 +19,79 @@ convert_alacritty_to_kitty() {
 
     # Awk script to extract and reformat colors
     awk '
-      # Function to format a raw hex color string (e.g., "0xRRGGBB" or "#RRGGBB")
-      # into the "#RRGGBB" format required by Kitty.
       function format_color(hex_str) {
-          # Remove leading "0x" if present
-          if (substr(hex_str, 1, 2) == "0x") {
-              hex_str = substr(hex_str, 3)
-          }
-          # Ensure the string starts with "#"
-          if (substr(hex_str, 1, 1) != "#") {
-              return "#" hex_str
-          }
-          return hex_str
+          # Remove leading "0x" or "#" or quotes
+          gsub(/["'\'' ]/, "", hex_str)
+          sub(/^0x/, "", hex_str)
+          sub(/^#/, "", hex_str)
+          return "#" hex_str
       }
 
-      # Function to extract the quoted color value from a line and format it
-      function get_and_format_quoted_color(line) {
-          # Use match to find the content inside quotes
-          match(line, /"([^"]+)"/, arr)
-          # arr[1] contains the string inside the quotes, pass it to format_color
-          return format_color(arr[1])
+      function extract_value(line) {
+          match(line, /= *["'\'' ]*([^"'\'' ]+)/, arr)
+          value = arr[1]
+          # Skip non-hex values like "CellForeground"
+          if (value ~ /^(#|0x)?[0-9a-fA-F]{6}$/) {
+              return format_color(value)
+          } else {
+              return ""  # Skip invalid values
+          }
       }
 
-      # Set section variables based on Alacritty TOML headers
-      /^\[colors\.primary\]/ { section="primary"; next }
-      /^\[colors\.normal\]/ { section="normal"; next }
-      /^\[colors\.bright\]/ { section="bright"; next }
-      /^\[colors\.selection\]/ { section="selection"; next }
-      /^\[colors\.cursor\]/ { section="cursor"; next }
-      /^\[/ { section=""; next } # Reset section for other headers
+      /^\[colors\.primary\]/ { section = "primary"; next }
+      /^\[colors\.normal\]/  { section = "normal"; next }
+      /^\[colors\.bright\]/  { section = "bright"; next }
+      /^\[colors\.cursor\]/  { section = "cursor"; next }
+      /^\[colors\.selection\]/ { section = "selection"; next }
+      /^\[/ { section = ""; next }
 
-      # Process colors based on the current section
       section == "primary" && /background/ {
-          print "background " get_and_format_quoted_color($0)
+          print "background " extract_value($0)
       }
       section == "primary" && /foreground/ {
-          print "foreground " get_and_format_quoted_color($0)
+          print "foreground " extract_value($0)
       }
 
       section == "selection" && /background/ {
-          print "selection_background " get_and_format_quoted_color($0)
+          print "selection_background " extract_value($0)
       }
-      section == "selection" && /text/ { # Alacritty "text" in selection maps to Kitty "selection_foreground"
-          print "selection_foreground " get_and_format_quoted_color($0)
+      section == "selection" && /text/ {
+          print "selection_foreground " extract_value($0)
       }
 
       section == "cursor" && /text/ {
-          print "cursor_text_color " get_and_format_quoted_color($0)
+          print "cursor_text_color " extract_value($0)
       }
       section == "cursor" && /cursor/ {
-          print "cursor " get_and_format_quoted_color($0)
+          print "cursor " extract_value($0)
       }
-      
-      # Process normal (color0-color7) palette
-      section == "normal" && /black/ { print "color0 " get_and_format_quoted_color($0) }
-      section == "normal" && /red/ { print "color1 " get_and_format_quoted_color($0) }
-      section == "normal" && /green/ { print "color2 " get_and_format_quoted_color($0) }
-      section == "normal" && /yellow/ { print "color3 " get_and_format_quoted_color($0) }
-      section == "normal" && /blue/ { print "color4 " get_and_format_quoted_color($0) }
-      section == "normal" && /magenta/ { print "color5 " get_and_format_quoted_color($0) }
-      section == "normal" && /cyan/ { print "color6 " get_and_format_quoted_color($0) }
-      section == "normal" && /white/ { print "color7 " get_and_format_quoted_color($0) }
 
-      # Process bright (color8-color15) palette
-      section == "bright" && /black/ { print "color8 " get_and_format_quoted_color($0) }
-      section == "bright" && /red/ { print "color9 " get_and_format_quoted_color($0) }
-      section == "bright" && /green/ { print "color10 " get_and_format_quoted_color($0) }
-      section == "bright" && /yellow/ { print "color11 " get_and_format_quoted_color($0) }
-      section == "bright" && /blue/ { print "color12 " get_and_format_quoted_color($0) }
-      section == "bright" && /magenta/ { print "color13 " get_and_format_quoted_color($0) }
-      section == "bright" && /cyan/ { print "color14 " get_and_format_quoted_color($0) }
-      section == "bright" && /white/ { print "color15 " get_and_format_quoted_color($0) }
+      section == "normal" && /black/   { print "color0 "  extract_value($0) }
+      section == "normal" && /red/     { print "color1 "  extract_value($0) }
+      section == "normal" && /green/   { print "color2 "  extract_value($0) }
+      section == "normal" && /yellow/  { print "color3 "  extract_value($0) }
+      section == "normal" && /blue/    { print "color4 "  extract_value($0) }
+      section == "normal" && /magenta/ { print "color5 "  extract_value($0) }
+      section == "normal" && /cyan/    { print "color6 "  extract_value($0) }
+      section == "normal" && /white/   { print "color7 "  extract_value($0) }
+
+      section == "bright" && /black/   { print "color8 "  extract_value($0) }
+      section == "bright" && /red/     { print "color9 "  extract_value($0) }
+      section == "bright" && /green/   { print "color10 " extract_value($0) }
+      section == "bright" && /yellow/  { print "color11 " extract_value($0) }
+      section == "bright" && /blue/    { print "color12 " extract_value($0) }
+      section == "bright" && /magenta/ { print "color13 " extract_value($0) }
+      section == "bright" && /cyan/    { print "color14 " extract_value($0) }
+      section == "bright" && /white/   { print "color15 " extract_value($0) }
     ' "$alacritty_file"
 
   } >"$kitty_file"
 
-  # Read the correctly formatted colors from the newly generated kitty_file
-  # and append the remaining Kitty-specific configurations.
-  # Using default values if a color is not found in the file.
+  # Extract fallback color values
   bg_color=$(grep '^background' "$kitty_file" | awk '{print $2}' || echo '#000000')
   fg_color=$(grep '^foreground' "$kitty_file" | awk '{print $2}' || echo '#ffffff')
   blue_color=$(grep '^color4' "$kitty_file" | awk '{print $2}' || echo '#0000ff')
-  black_color=$(grep '^color0' "$kitty_file" | awk '{print $2}' || echo '#3c3836') # Using a more specific default
+  black_color=$(grep '^color0' "$kitty_file" | awk '{print $2}' || echo '#3c3836')
 
   {
     echo ""
@@ -119,14 +110,14 @@ convert_alacritty_to_kitty() {
   } >>"$kitty_file"
 }
 
-# Find all alacritty.toml files and convert them
+# Convert all alacritty.toml files found
 find "$THEMES_DIR" -name "alacritty.toml" -type f | while read -r alacritty_file; do
   convert_alacritty_to_kitty "$alacritty_file"
 done
 
 echo "Conversion complete!"
 
-# Set up symlink for the current Kitty theme
+# Set up symlink for the current theme
 CURRENT_THEME_KITTY="$HOME/.config/omarchy/current/theme/kitty.conf"
 KITTY_CONFIG_DIR="$HOME/.config/kitty"
 KITTY_CONFIG="$KITTY_CONFIG_DIR/kitty.conf"
