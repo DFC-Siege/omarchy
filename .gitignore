@@ -11,3 +11,7 @@
 !fastfetch/**
 !starship/
 !starship/**
+!omarchy/
+!omarchy/**
+!nvim/
+!nvim/**
