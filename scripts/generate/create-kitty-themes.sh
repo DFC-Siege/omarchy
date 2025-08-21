@@ -1,6 +1,6 @@
 #!/bin/bash
 
-THEMES_DIR="$HOME/.local/share/omarchy/themes"
+THEMES_DIR="$HOME/.config/omarchy/themes"
 
 if [ ! -d "$THEMES_DIR" ]; then
   echo "Error: $THEMES_DIR not found"
