@@ -15,3 +15,7 @@
 !omarchy/**
 !nvim/
 !nvim/**
+!pipe-viewer/
+!pipe-viewer/**
+pipe-viewer/watched.txt
+pipe-viewer/playlists/
