@@ -1,0 +1,1 @@
+/home/dsilvaba/.config/omarchy/current/theme/neovim.lua
