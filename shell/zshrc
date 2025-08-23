@@ -1,0 +1,70 @@
+# Source other config files
+source ~/.config/shell/exports
+source ~/.config/shell/aliases
+source ~/.config/shell/functions
+source ~/.config/shell/plugins
+
+# History settings
+HISTSIZE=10000
+SAVEHIST=20000
+HISTFILE=~/.zsh_history
+
+# Zsh history options (equivalent to bash HISTCONTROL)
+setopt HIST_IGNORE_DUPS        # Don't save duplicate commands
+setopt HIST_IGNORE_SPACE       # Don't save commands starting with space
+setopt APPEND_HISTORY          # Append to history file (like bash histappend)
+setopt SHARE_HISTORY           # Share history between sessions
+setopt HIST_REDUCE_BLANKS      # Remove extra blanks from history
+setopt HIST_VERIFY             # Show command with history expansion to user before running it
+
+# Shell options (zsh equivalents of bash shopt)
+setopt AUTO_CD                 # cd by typing directory name if it's not a command
+setopt CORRECT                 # Spelling correction for commands (like cdspell/dirspell)
+setopt CORRECT_ALL             # Spelling correction for arguments
+
+# Enable completion system
+autoload -Uz compinit
+compinit
+
+# Make completion case-insensitive and show menu
+zstyle ':completion:*' matcher-list 'm:{a-z}={A-Za-z}'
+zstyle ':completion:*' menu select
+
+# Prompt customization (if not using starship)
+if ! command -v starship &>/dev/null; then
+    # Simple zsh prompt similar to your bash PS1
+    PROMPT='%F{green}%n@%m%f:%F{blue}%~%f%# '
+fi
+
+# Initialize starship if available
+if command -v starship &>/dev/null; then
+    eval "$(starship init zsh)"
+fi
+
+# Run Fastfetch if available
+if command -v fastfetch &>/dev/null; then
+    fastfetch
+fi
+
+# Load local customizations if they exist
+if [ -f ~/.config/shell/local ]; then
+    source ~/.config/shell/local
+fi
+
+if [ -f ~/.oh-my-zsh/custom/plugins/zsh-autosuggestions/zsh-autosuggestions.zsh ]; then
+    source ~/.oh-my-zsh/custom/plugins/zsh-autosuggestions/zsh-autosuggestions.zsh
+fi
+
+# Initialize zoxide
+eval "$(zoxide init zsh)"
+
+# Optional: Enable zsh's powerful globbing
+setopt EXTENDED_GLOB
+
+# Optional: Auto-pushd (maintains directory stack)
+setopt AUTO_PUSHD
+setopt PUSHD_IGNORE_DUPS
+
+# Optional: Better job control
+setopt NO_HUP                  # Don't send SIGHUP to background processes when shell exits
+setopt NO_CHECK_JOBS           # Don't warn about running processes when exiting
