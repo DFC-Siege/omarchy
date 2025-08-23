@@ -1,24 +1,24 @@
 #!/bin/bash
 
-THEMES_DIR="$HOME/.config/omarchy/themes"
+THEMES_DIR="$HOME/.local/share/omarchy/themes"
 
 if [ ! -d "$THEMES_DIR" ]; then
-  echo "Error: $THEMES_DIR not found"
-  exit 1
+        echo "Error: $THEMES_DIR not found"
+        exit 1
 fi
 
 convert_alacritty_to_kitty() {
-  local alacritty_file="$1"
-  local kitty_file="${alacritty_file%/*}/kitty.conf"
+        local alacritty_file="$1"
+        local kitty_file="${alacritty_file%/*}/kitty.conf"
 
-  echo "Converting $alacritty_file -> $kitty_file"
+        echo "Converting $alacritty_file -> $kitty_file"
 
-  {
-    echo "# Generated from alacritty.toml"
-    echo ""
+        {
+                echo "# Generated from alacritty.toml"
+                echo ""
 
-    # Awk script to extract and reformat colors
-    awk '
+                # Awk script to extract and reformat colors
+                awk '
       function format_color(hex_str) {
           # Remove leading "0x" or "#" or quotes
           gsub(/["'\'' ]/, "", hex_str)
@@ -85,36 +85,36 @@ convert_alacritty_to_kitty() {
       section == "bright" && /white/   { print "color15 " extract_value($0) }
     ' "$alacritty_file"
 
-  } >"$kitty_file"
+        } >"$kitty_file"
 
-  # Extract fallback color values
-  bg_color=$(grep '^background' "$kitty_file" | awk '{print $2}' || echo '#000000')
-  fg_color=$(grep '^foreground' "$kitty_file" | awk '{print $2}' || echo '#ffffff')
-  blue_color=$(grep '^color4' "$kitty_file" | awk '{print $2}' || echo '#0000ff')
-  black_color=$(grep '^color0' "$kitty_file" | awk '{print $2}' || echo '#3c3836')
+        # Extract fallback color values
+        bg_color=$(grep '^background' "$kitty_file" | awk '{print $2}' || echo '#000000')
+        fg_color=$(grep '^foreground' "$kitty_file" | awk '{print $2}' || echo '#ffffff')
+        blue_color=$(grep '^color4' "$kitty_file" | awk '{print $2}' || echo '#0000ff')
+        black_color=$(grep '^color0' "$kitty_file" | awk '{print $2}' || echo '#3c3836')
 
-  {
-    echo ""
-    echo "cursor ${fg_color}"
-    echo "cursor_text_color ${bg_color}"
-    echo ""
-    echo "url_color ${blue_color}"
-    echo ""
-    echo "active_border_color ${blue_color}"
-    echo "inactive_border_color ${black_color}"
-    echo ""
-    echo "active_tab_background ${blue_color}"
-    echo "active_tab_foreground ${bg_color}"
-    echo "inactive_tab_background ${black_color}"
-    echo "inactive_tab_foreground ${fg_color}"
-    echo "confirm_os_window_close 0"
-    echo "window_padding_width 8 8 8 8"
-  } >>"$kitty_file"
+        {
+                echo ""
+                echo "cursor ${fg_color}"
+                echo "cursor_text_color ${bg_color}"
+                echo ""
+                echo "url_color ${blue_color}"
+                echo ""
+                echo "active_border_color ${blue_color}"
+                echo "inactive_border_color ${black_color}"
+                echo ""
+                echo "active_tab_background ${blue_color}"
+                echo "active_tab_foreground ${bg_color}"
+                echo "inactive_tab_background ${black_color}"
+                echo "inactive_tab_foreground ${fg_color}"
+                echo "confirm_os_window_close 0"
+                echo "window_padding_width 8 8 8 8"
+        } >>"$kitty_file"
 }
 
 # Convert all alacritty.toml files found
 find "$THEMES_DIR" -name "alacritty.toml" -type f | while read -r alacritty_file; do
-  convert_alacritty_to_kitty "$alacritty_file"
+        convert_alacritty_to_kitty "$alacritty_file"
 done
 
 echo "Conversion complete!"
@@ -125,14 +125,14 @@ KITTY_CONFIG_DIR="$HOME/.config/kitty"
 KITTY_CONFIG="$KITTY_CONFIG_DIR/kitty.conf"
 
 if [ -f "$CURRENT_THEME_KITTY" ]; then
-  mkdir -p "$KITTY_CONFIG_DIR"
+        mkdir -p "$KITTY_CONFIG_DIR"
 
-  if [ -L "$KITTY_CONFIG" ] || [ -f "$KITTY_CONFIG" ]; then
-    rm "$KITTY_CONFIG"
-  fi
+        if [ -L "$KITTY_CONFIG" ] || [ -f "$KITTY_CONFIG" ]; then
+                rm "$KITTY_CONFIG"
+        fi
 
-  ln -s "$CURRENT_THEME_KITTY" "$KITTY_CONFIG"
-  echo "Created symlink: $KITTY_CONFIG -> $CURRENT_THEME_KITTY"
+        ln -s "$CURRENT_THEME_KITTY" "$KITTY_CONFIG"
+        echo "Created symlink: $KITTY_CONFIG -> $CURRENT_THEME_KITTY"
 else
-  echo "Warning: $CURRENT_THEME_KITTY not found. Make sure you have a current theme set."
+        echo "Warning: $CURRENT_THEME_KITTY not found. Make sure you have a current theme set."
 fi
