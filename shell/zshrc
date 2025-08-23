@@ -57,7 +57,7 @@ fi
 
 # Initialize zoxide
 eval "$(zoxide init zsh)"
-
+eval "$(mise activate zsh)"
 # Optional: Enable zsh's powerful globbing
 setopt EXTENDED_GLOB
 

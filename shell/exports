@@ -3,3 +3,4 @@ export PATH="$HOME/.cargo/bin:$PATH"
 export GOPATH="$HOME/go"
 export PATH="$GOPATH/bin:$PATH"
 export TERMINAL=kitty
+export PATH="$(npm prefix -g)/bin:$PATH"
