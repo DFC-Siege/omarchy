@@ -19,7 +19,7 @@ if yay -Q "$PACKAGE_NAME" &>/dev/null; then
 fi
 
 echo "[$SCRIPT_NAME] Installing $PACKAGE_NAME..."
-sudo yay -S --noconfirm "$PACKAGE_NAME"
+yay -S --noconfirm "$PACKAGE_NAME"
 
 if [ $? -ne 0 ]; then
         echo "[$SCRIPT_NAME] Error: Failed to install $PACKAGE_NAME."
