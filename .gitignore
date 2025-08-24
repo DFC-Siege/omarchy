@@ -19,3 +19,5 @@
 !pipe-viewer/**
 pipe-viewer/watched.txt
 pipe-viewer/playlists/
+!zellij/
+!zellij/**
