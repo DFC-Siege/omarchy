@@ -19,8 +19,8 @@ setopt HIST_VERIFY             # Show command with history expansion to user bef
 
 # Shell options (zsh equivalents of bash shopt)
 setopt AUTO_CD                 # cd by typing directory name if it's not a command
-setopt CORRECT                 # Spelling correction for commands (like cdspell/dirspell)
-setopt CORRECT_ALL             # Spelling correction for arguments
+# setopt CORRECT                 # Spelling correction for commands (like cdspell/dirspell)
+# setopt CORRECT_ALL             # Spelling correction for arguments
 
 # Enable completion system
 autoload -Uz compinit
