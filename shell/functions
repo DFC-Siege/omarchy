@@ -3,10 +3,66 @@ fcd() {
   dir=$(find . -type d \( -name .git -prune -o -name node_modules -prune \) -o -type d -print 2>/dev/null | fzf +m) && cd "$dir"
 }
 
+build_php7() {
+    docker build -t php7-dev - << 'EOF'
+FROM php:7.4-cli
+RUN apt-get update && \
+    apt-get install -y zip unzip libzip-dev libpng-dev libjpeg-dev libfreetype6-dev && \
+    docker-php-ext-configure gd --with-freetype --with-jpeg && \
+    docker-php-ext-install zip gd exif && \
+    curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer && \
+    apt-get clean && rm -rf /var/lib/apt/lists/*
+EOF
+}
+
 php7() {
+    if ! docker image inspect php7-dev &> /dev/null; then
+        echo "Building php7-dev image..."
+        build_php7
+    fi
+    
     docker run -it --rm \
         -v "$(pwd):/workspace" \
         -w /workspace \
-        php:7.4-cli \
+        php7-dev \
         bash
+}
+# To connect: mysql://root:root@127.0.0.1:3306/mydb
+mariadb_start() {
+    docker run -d \
+        --name mariadb-dev \
+        -e MYSQL_ROOT_PASSWORD=root \
+        -e MYSQL_DATABASE=mydb \
+        -p 3306:3306 \
+        -v mariadb_data:/var/lib/mysql \
+        -v "$(pwd):/dumps" \
+        --tmpfs /tmp:rw,noexec,nosuid,size=2g \
+        mariadb:10.11 \
+        --innodb-buffer-pool-size=1G \
+        --max-allowed-packet=1G \
+        --innodb-log-file-size=512M \
+        --innodb-flush-log-at-trx-commit=2
+}
+
+mariadb_import() {
+    if [ -z "$1" ]; then
+        echo "Usage: mariadb_import <dump_file.sql>"
+        return 1
+    fi
+    
+    echo "Importing $1..."
+    docker exec -i mariadb-dev mysql -uroot -proot mydb < "$1"
+}
+
+mariadb_shell() {
+    docker exec -it mariadb-dev mysql -uroot -proot mydb
+}
+
+mariadb_stop() {
+    docker stop mariadb-dev
+    docker rm mariadb-dev
+}
+
+mariadb_logs() {
+    docker logs -f mariadb-dev
 }
