@@ -9,7 +9,7 @@ FROM php:7.4-cli
 RUN apt-get update && \
     apt-get install -y zip unzip libzip-dev libpng-dev libjpeg-dev libfreetype6-dev && \
     docker-php-ext-configure gd --with-freetype --with-jpeg && \
-    docker-php-ext-install zip gd exif && \
+    docker-php-ext-install zip gd exif pdo_mysql mysqli && \
     curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer && \
     apt-get clean && rm -rf /var/lib/apt/lists/*
 EOF
@@ -24,9 +24,12 @@ php7() {
     docker run -it --rm \
         -v "$(pwd):/workspace" \
         -w /workspace \
+        -p 8000:8000 \
+        --link mariadb-dev:mysql \
         php7-dev \
         bash
 }
+
 # To connect: mysql://root:root@127.0.0.1:3306/mydb
 mariadb_start() {
     docker run -d \
