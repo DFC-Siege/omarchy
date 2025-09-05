@@ -30,7 +30,6 @@ php7() {
         bash
 }
 
-# To connect: mysql://root:root@127.0.0.1:3306/mydb
 mariadb_start() {
     docker run -d \
         --name mariadb-dev \
@@ -45,6 +44,37 @@ mariadb_start() {
         --max-allowed-packet=1G \
         --innodb-log-file-size=512M \
         --innodb-flush-log-at-trx-commit=2
+}
+
+mariadb_phpmyadmin_start() {
+    docker run -d \
+        --name phpmyadmin-dev \
+        --link mariadb-dev:db \
+        -e PMA_HOST=mariadb-dev \
+        -e PMA_USER=root \
+        -e PMA_PASSWORD=root \
+        -p 8080:80 \
+        phpmyadmin/phpmyadmin:latest
+    
+    echo "phpMyAdmin available at: http://localhost:8080"
+    echo "Username: root"
+    echo "Password: root"
+}
+
+mariadb_phpmyadmin_stop() {
+    docker stop phpmyadmin-dev
+    docker rm phpmyadmin-dev
+}
+
+mariadb_stack_start() {
+    mariadb_start
+    sleep 5
+    mariadb_phpmyadmin_start
+}
+
+mariadb_stack_stop() {
+    mariadb_phpmyadmin_stop 2>/dev/null
+    mariadb_stop
 }
 
 mariadb_import() {
@@ -68,4 +98,19 @@ mariadb_stop() {
 
 mariadb_logs() {
     docker logs -f mariadb-dev
+}
+
+mariadb_recreate_db() {
+    if [ -z "$1" ]; then
+        echo "Usage: mariadb_recreate_db <database_name>"
+        return 1
+    fi
+    local db_name="$1"
+    
+    echo "Dropping database '$db_name' if it exists..."
+    docker exec mariadb-dev mysql -uroot -proot -e "DROP DATABASE IF EXISTS \`$db_name\`;"
+    
+    echo "Creating new database '$db_name'..."
+    docker exec mariadb-dev mysql -uroot -proot -e "CREATE DATABASE \`$db_name\`;"
+    echo "Database '$db_name' recreated successfully."
 }
