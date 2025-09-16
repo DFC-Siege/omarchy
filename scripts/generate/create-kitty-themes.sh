@@ -1,12 +1,5 @@
 #!/bin/bash
 
-THEMES_DIR="$HOME/.local/share/omarchy/themes"
-
-if [ ! -d "$THEMES_DIR" ]; then
-        echo "Error: $THEMES_DIR not found"
-        exit 1
-fi
-
 convert_alacritty_to_kitty() {
         local alacritty_file="$1"
         local kitty_file="${alacritty_file%/*}/kitty.conf"
@@ -17,10 +10,8 @@ convert_alacritty_to_kitty() {
                 echo "# Generated from alacritty.toml"
                 echo ""
 
-                # Awk script to extract and reformat colors
                 awk '
       function format_color(hex_str) {
-          # Remove leading "0x" or "#" or quotes
           gsub(/["'\'' ]/, "", hex_str)
           sub(/^0x/, "", hex_str)
           sub(/^#/, "", hex_str)
@@ -30,11 +21,10 @@ convert_alacritty_to_kitty() {
       function extract_value(line) {
           match(line, /= *["'\'' ]*([^"'\'' ]+)/, arr)
           value = arr[1]
-          # Skip non-hex values like "CellForeground"
           if (value ~ /^(#|0x)?[0-9a-fA-F]{6}$/) {
               return format_color(value)
           } else {
-              return ""  # Skip invalid values
+              return ""
           }
       }
 
@@ -87,7 +77,6 @@ convert_alacritty_to_kitty() {
 
         } >"$kitty_file"
 
-        # Extract fallback color values
         bg_color=$(grep '^background' "$kitty_file" | awk '{print $2}' || echo '#000000')
         fg_color=$(grep '^foreground' "$kitty_file" | awk '{print $2}' || echo '#ffffff')
         blue_color=$(grep '^color4' "$kitty_file" | awk '{print $2}' || echo '#0000ff')
@@ -112,14 +101,30 @@ convert_alacritty_to_kitty() {
         } >>"$kitty_file"
 }
 
-# Convert all alacritty.toml files found
-find "$THEMES_DIR" -name "alacritty.toml" -type f | while read -r alacritty_file; do
-        convert_alacritty_to_kitty "$alacritty_file"
+THEMES_DIRS=(
+        "$HOME/.local/share/omarchy/themes"
+        "$HOME/.config/omarchy/themes"
+)
+
+found=0
+
+for dir in "${THEMES_DIRS[@]}"; do
+        if [ -d "$dir" ]; then
+                echo "Searching in: $dir"
+                found=1
+                find "$dir" -name "alacritty.toml" -type f | while read -r alacritty_file; do
+                        convert_alacritty_to_kitty "$alacritty_file"
+                done
+        fi
 done
+
+if [ $found -eq 0 ]; then
+        echo "Error: No valid themes directory found"
+        exit 1
+fi
 
 echo "Conversion complete!"
 
-# Set up symlink for the current theme
 CURRENT_THEME_KITTY="$HOME/.config/omarchy/current/theme/kitty.conf"
 KITTY_CONFIG_DIR="$HOME/.config/kitty"
 KITTY_CONFIG="$KITTY_CONFIG_DIR/kitty.conf"

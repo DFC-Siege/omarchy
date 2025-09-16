@@ -68,3 +68,4 @@ setopt PUSHD_IGNORE_DUPS
 # Optional: Better job control
 setopt NO_HUP                  # Don't send SIGHUP to background processes when shell exits
 setopt NO_CHECK_JOBS           # Don't warn about running processes when exiting
+export SUDO_EDITOR=nvim
