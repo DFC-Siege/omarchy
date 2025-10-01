@@ -21,3 +21,6 @@ pipe-viewer/watched.txt
 pipe-viewer/playlists/
 !zellij/
 !zellij/**
+!kitty/
+!kitty/**
+kitty/kitty.conf
