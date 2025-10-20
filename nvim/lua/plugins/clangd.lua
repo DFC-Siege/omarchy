@@ -21,7 +21,8 @@ return {
             "platformio.ini",
             "compile_commands.json",
             ".clangd",
-            ".clang-format"
+            ".clang-format",
+            ".git"
           )(fname)
         end,
       },
@@ -30,4 +31,13 @@ return {
       },
     },
   },
+  config = function(_, opts)
+    local lspconfig = require("lspconfig")
+
+    for server, config in pairs(opts.servers) do
+      if config.enabled ~= false then
+        lspconfig[server].setup(config)
+      end
+    end
+  end,
 }
