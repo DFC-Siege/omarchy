@@ -10,22 +10,14 @@ return {
           "--clang-tidy",
           "--header-insertion=iwyu",
           "--completion-style=detailed",
-          "--function-arg-placeholders",
-          "--fallback-style=llvm",
-          "--compile-commands-dir=.",
+          "--function-arg-placeholders=true",
           "--query-driver=**",
           "--enable-config",
         },
-        root_dir = function(fname)
-          return require("lspconfig.util").root_pattern(
-            "platformio.ini",
-            "compile_commands.json",
-            ".clangd",
-          )(fname)
-        end,
       },
       ccls = {
         enabled = false,
       },
     },
   },
+}
