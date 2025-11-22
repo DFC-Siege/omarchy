@@ -24,3 +24,5 @@ pipe-viewer/playlists/
 !kitty/
 !kitty/**
 kitty/kitty.conf
+!ghostty
+!ghostty/**
