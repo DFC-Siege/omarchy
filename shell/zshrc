@@ -56,7 +56,7 @@ if [ -f ~/.oh-my-zsh/custom/plugins/zsh-autosuggestions/zsh-autosuggestions.zsh 
 fi
 
 # Initialize zoxide
-eval "$(zoxide init zsh)"
+eval "$(zoxide init --cmd j zsh)"
 eval "$(mise activate zsh)"
 # Optional: Enable zsh's powerful globbing
 setopt EXTENDED_GLOB
@@ -86,3 +86,7 @@ function zle-line-init {
   echo -ne "\e[5 q"
 }
 zle -N zle-line-init
+
+setopt HIST_IGNORE_ALL_DUPS
+setopt HIST_IGNORE_DUPS
+setopt HIST_FIND_NO_DUPS
