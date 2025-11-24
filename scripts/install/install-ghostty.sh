@@ -2,27 +2,27 @@
 
 set -e
 
-SCRIPT_NAME="bibata-cursor-theme Installer"
-PACKAGE_NAME="bibata-cursor-theme"
+SCRIPT_NAME="ghostty Installer"
+PACKAGE_NAME="ghostty"
 
 echo "[$SCRIPT_NAME] Starting $PACKAGE_NAME installation..."
 
-if ! command -v yay &>/dev/null; then
-        echo "[$SCRIPT_NAME] Error: yay is required but not installed."
+if ! command -v pacman &>/dev/null; then
+        echo "[$SCRIPT_NAME] Error: pacman is required but not installed."
         echo "[$SCRIPT_NAME] This script is for Arch-based systems only."
         exit 1
 fi
 
-if yay -Q "$PACKAGE_NAME" &>/dev/null; then
+if pacman -Q "$PACKAGE_NAME" &>/dev/null; then
         echo "[$SCRIPT_NAME] $PACKAGE_NAME is already installed."
         exit 0
 fi
 
 echo "[$SCRIPT_NAME] Installing $PACKAGE_NAME..."
-yay -S --noconfirm "$PACKAGE_NAME"
+sudo pacman -S --noconfirm "$PACKAGE_NAME"
 
 if [ $? -ne 0 ]; then
-        echo "[$SCRIPT_NAME] Error: Failed to install $PACKAGE_NAME."
+        echo "[$SCRIPT_NAME] Error: Failed to install $PACKAGE_NAME"
         exit 1
 fi
 
