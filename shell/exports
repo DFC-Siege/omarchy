@@ -2,5 +2,5 @@ export PATH="$HOME/.local/bin:$PATH"
 export PATH="$HOME/.cargo/bin:$PATH"
 export GOPATH="$HOME/go"
 export PATH="$GOPATH/bin:$PATH"
-export TERMINAL=ghostty
+export TERMINAL=kitty
 export PATH="$(npm prefix -g)/bin:$PATH"
