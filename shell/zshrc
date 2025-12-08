@@ -1,3 +1,5 @@
+eval "$(mise activate zsh)"
+
 # Source other config files
 source ~/.config/shell/exports
 source ~/.config/shell/aliases
