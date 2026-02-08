@@ -10,6 +10,7 @@
     "custom/update",
     "custom/voxtype",
     "custom/screenrecording-indicator",
+    "custom/weather",
   ],
   "modules-right": [
     "group/tray-expander",
@@ -58,7 +59,13 @@
     "signal": 7,
     "interval": 3600,
   },
-
+  "custom/weather": {
+    "format": "{}",
+    "exec": "~/.config/waybar/scripts/weather.sh",
+    "return-type": "json",
+    "interval": 600,
+    "tooltip": true,
+  },
   "cpu": {
     "interval": 5,
     "format": "󰍛",

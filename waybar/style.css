@@ -105,3 +105,8 @@ tooltip {
 #custom-voxtype.recording {
   color: #a55555;
 }
+
+#custom-weather {
+  margin-left: 8px;
+  padding-top: 3px;
+}
