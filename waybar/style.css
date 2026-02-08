@@ -1,14 +1,25 @@
 @import "../omarchy/current/theme/waybar.css";
 
 * {
-  background-color: @background;
+  background-color: transparent;
   color: @foreground;
 
   border: none;
   border-radius: 0;
   min-height: 0;
   font-family: "CaskaydiaMono Nerd Font";
-  font-size: 12px;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.modules-center,
+.modules-left,
+.modules-right {
+  margin-top: 8px;
+  border-radius: 1em;
+  border: 1px solid alpha(@foreground, 0.3);
+  background-color: @background;
+  padding: 0 1em;
 }
 
 .modules-left {
