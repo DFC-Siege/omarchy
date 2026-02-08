@@ -68,7 +68,10 @@
 }
 
 tooltip {
-  padding: 2px;
+  padding: 4px 6px;
+  background-color: @background;
+  border-radius: 1em;
+  border: 1px solid alpha(@foreground, 0.3);
 }
 
 #custom-update {
