@@ -31,3 +31,7 @@ walker/*
 !walker/config.toml
 !walker/themes/
 !walker/themes/**
+!waybar/
+waybar/*
+!waybar/config.jsonc
+!waybar/style.css
