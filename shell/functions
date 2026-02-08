@@ -109,3 +109,21 @@ mariadb_recreate_db() {
     docker exec mariadb-dev mysql -uroot -proot -e "CREATE DATABASE \`$db_name\`;"
     echo "Database '$db_name' recreated successfully."
 }
+
+bfm() {
+    if ! command -v idf.py &> /dev/null; then
+        echo "ESP-IDF not detected. Loading environment..."
+        source "$HOME/esp/esp-idf/export.sh" > /dev/null 2>&1
+    fi
+
+    local port=${1:-1}
+    idf.py -p "/dev/ttyACM$port" -b 115200 build flash monitor
+}
+
+idf() {
+    if ! command -v idf.py &> /dev/null; then
+        source "$HOME/esp/esp-idf/export.sh" > /dev/null 2>&1
+    fi
+
+    idf.py "$@"
+}
