@@ -15,7 +15,7 @@
 .modules-center,
 .modules-left,
 .modules-right {
-  margin-top: 8px;
+  margin-top: 10px;
   border-radius: 1em;
   border: 1px solid alpha(@foreground, 0.3);
   background-color: @background;
@@ -23,11 +23,11 @@
 }
 
 .modules-left {
-  margin-left: 8px;
+  margin-left: 10px;
 }
 
 .modules-right {
-  margin-right: 8px;
+  margin-right: 10px;
 }
 
 #workspaces button {
