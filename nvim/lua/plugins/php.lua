@@ -4,7 +4,12 @@ return {
     optional = true,
     opts = {
       formatters_by_ft = {
-        php = { "pint", "php_cs_fixer" },
+        php = { "pint" },
+      },
+      formatters = {
+        pint = {
+          command = "vendor/bin/pint",
+        },
       },
     },
   },
