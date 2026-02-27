@@ -4,3 +4,4 @@ export GOPATH="$HOME/go"
 export PATH="$GOPATH/bin:$PATH"
 export TERMINAL=kitty
 export PICO_SDK_PATH=/usr/share/pico-sdk
+export GOPRIVATE=gitlab.wijdoendingen.nl

@@ -112,7 +112,12 @@ tooltip {
 
 #custom-weather {
   margin-left: 8px;
-  padding-top: 3px;
+  padding-top: 1px;
+}
+
+#custom-idle-indicator.active,
+#custom-notification-silencing-indicator.active {
+  color: #a55555;
 }
 
 #custom-idle-indicator.active,
