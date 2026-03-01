@@ -11,3 +11,4 @@ alias uam='_uam(){ local port=$1; local env=$2; if [ -n "$env" ]; then pio run -
 alias monitor='_m(){ pio run -t monitor --monitor-port /dev/ttyACM$1; }; _m'
 alias notes='cd ~/notes/ && v .'
 alias config='cd ~/.config/ && v .'
+alias ssh='kitty +kitten ssh'
