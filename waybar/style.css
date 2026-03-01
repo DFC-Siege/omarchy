@@ -16,10 +16,10 @@
 .modules-left,
 .modules-right {
   margin-top: 10px;
-  border-radius: 1em;
+  border-radius: 4em;
   border: 1px solid alpha(@foreground, 0.3);
   background-color: @background;
-  padding: 0 1em;
+  padding: 0.5em 1em;
 }
 
 .modules-left {
@@ -68,7 +68,7 @@
 }
 
 tooltip {
-  padding: 4px 6px;
+  padding: 0.5em 1em;
   background-color: @background;
   border-radius: 1em;
   border: 1px solid alpha(@foreground, 0.3);
