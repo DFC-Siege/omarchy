@@ -45,7 +45,7 @@
 #battery,
 #pulseaudio,
 #custom-omarchy,
-
+#wireguard,
 #custom-update {
   min-width: 12px;
   margin: 0 7.5px;
@@ -86,7 +86,6 @@ tooltip {
   opacity: 0;
 }
 
-
 #custom-screenrecording-indicator,
 #custom-idle-indicator,
 #custom-notification-silencing-indicator {
@@ -123,4 +122,12 @@ tooltip {
 #custom-idle-indicator.active,
 #custom-notification-silencing-indicator.active {
   color: #a55555;
+}
+
+#custom-wireguard.connected {
+  color: #a55555;
+}
+
+#custom-wireguard.disconnected {
+  opacity: 0.5;
 }
