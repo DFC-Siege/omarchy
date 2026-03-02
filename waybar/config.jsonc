@@ -3,7 +3,7 @@
   "layer": "top",
   "position": "top",
   "spacing": 0,
-  "height": 36,
+  "height": 24,
   "modules-left": ["custom/omarchy", "hyprland/workspaces"],
   "modules-center": [
     "clock",
@@ -16,6 +16,7 @@
     "group/tray-expander",
     "bluetooth",
     "network",
+    "custom/wireguard",
     "pulseaudio",
     "cpu",
     "battery",
@@ -65,6 +66,7 @@
     "return-type": "json",
     "interval": 600,
     "tooltip": true,
+    "on-click": "omarchy-launch-floating-terminal-with-presentation 'wthrr Zaltbommel -f d && wthrr -f w'",
   },
   "cpu": {
     "interval": 5,
@@ -166,16 +168,23 @@
     "on-click": "omarchy-toggle-idle",
     "exec": "$OMARCHY_PATH/default/waybar/indicators/idle.sh",
     "signal": 9,
-    "return-type": "json"
+    "return-type": "json",
   },
   "custom/notification-silencing-indicator": {
     "on-click": "omarchy-toggle-notification-silencing",
     "exec": "$OMARCHY_PATH/default/waybar/indicators/notification-silencing.sh",
     "signal": 10,
-    "return-type": "json"
+    "return-type": "json",
   },
   "tray": {
     "icon-size": 12,
     "spacing": 12,
+  },
+  "custom/wireguard": {
+    "format": "󰖂",
+    "exec": "test -d /sys/class/net/wg0 && echo '{\"class\": \"connected\", \"tooltip\": \"VPN Connected\"}' || echo '{\"class\": \"disconnected\", \"tooltip\": \"VPN Disconnected\"}'",
+    "return-type": "json",
+    "interval": 2,
+    "on-click": "test -d /sys/class/net/wg0 && sudo wg-quick down wg0 || (sudo resolvconf -u && sudo wg-quick up wg0)",
   },
 }

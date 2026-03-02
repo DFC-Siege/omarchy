@@ -15,19 +15,19 @@
 .modules-center,
 .modules-left,
 .modules-right {
-  margin-top: 10px;
-  border-radius: 1em;
-  border: 1px solid alpha(@foreground, 0.3);
+  margin-top: 16px;
+  border-radius: 4em;
+  border: 2px solid alpha(@foreground, 0.2);
   background-color: @background;
-  padding: 0 1em;
+  padding: 0.6em 1em;
 }
 
 .modules-left {
-  margin-left: 10px;
+  margin-left: 16px;
 }
 
 .modules-right {
-  margin-right: 10px;
+  margin-right: 16px;
 }
 
 #workspaces button {
@@ -45,7 +45,7 @@
 #battery,
 #pulseaudio,
 #custom-omarchy,
-
+#wireguard,
 #custom-update {
   min-width: 12px;
   margin: 0 7.5px;
@@ -68,7 +68,7 @@
 }
 
 tooltip {
-  padding: 4px 6px;
+  padding: 0.5em 1em;
   background-color: @background;
   border-radius: 1em;
   border: 1px solid alpha(@foreground, 0.3);
@@ -85,7 +85,6 @@ tooltip {
 .hidden {
   opacity: 0;
 }
-
 
 #custom-screenrecording-indicator,
 #custom-idle-indicator,
@@ -118,4 +117,17 @@ tooltip {
 #custom-idle-indicator.active,
 #custom-notification-silencing-indicator.active {
   color: #a55555;
+}
+
+#custom-idle-indicator.active,
+#custom-notification-silencing-indicator.active {
+  color: #a55555;
+}
+
+#custom-wireguard.connected {
+  color: #a55555;
+}
+
+#custom-wireguard.disconnected {
+  opacity: 0.5;
 }

@@ -1,9 +1,10 @@
 @import "../../../../.local/share/omarchy/default/walker/themes/omarchy-default/style.css";
 
 .box-wrapper {
-  border-radius: 1em;
+  border-radius: 2em;
 }
 
 .search-container {
-  border-radius: 1em;
+  border-radius: 2em;
+  padding-left: 1em;
 }
