@@ -37,3 +37,6 @@ waybar/*
 !waybar/scripts/
 !waybar/scripts/*
 !waybar/style.css
+!weathercrab/
+!weathercrab/*
+!weathercrab/**

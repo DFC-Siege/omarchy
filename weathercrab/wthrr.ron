@@ -1,0 +1,23 @@
+(
+    address: "Zaltbommel",
+    language: "en_US",
+    forecast: [
+        day,
+    ],
+    units: (
+        temperature: celsius,
+        speed: kmh,
+        time: military,
+        precipitation: probability,
+    ),
+    gui: (
+        border: rounded,
+        color: default,
+        graph: (
+            style: lines(solid),
+            rowspan: double,
+            time_indicator: true,
+        ),
+        greeting: false,
+    ),
+)
