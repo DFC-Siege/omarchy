@@ -40,3 +40,6 @@ waybar/*
 !weathercrab/
 !weathercrab/*
 !weathercrab/**
+/hypr/hyprlock.conf
+/hypr/monitors.conf
+/omarchy/current
