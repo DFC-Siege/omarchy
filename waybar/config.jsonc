@@ -16,7 +16,7 @@
     "group/tray-expander",
     "bluetooth",
     "network",
-    "custom/wireguard",
+    "custom/tailscale",
     "pulseaudio",
     "cpu",
     "battery",
@@ -180,11 +180,11 @@
     "icon-size": 12,
     "spacing": 12,
   },
-  "custom/wireguard": {
+  "custom/tailscale": {
     "format": "󰖂",
-    "exec": "test -d /sys/class/net/wg0 && echo '{\"class\": \"connected\", \"tooltip\": \"VPN Connected\"}' || echo '{\"class\": \"disconnected\", \"tooltip\": \"VPN Disconnected\"}'",
+    "exec": "test -d /sys/class/net/tailscale0 && echo '{\"class\": \"connected\", \"tooltip\": \"Tailscale Connected\"}' || echo '{\"class\": \"disconnected\", \"tooltip\": \"Tailscale Disconnected\"}'",
     "return-type": "json",
     "interval": 2,
-    "on-click": "test -d /sys/class/net/wg0 && sudo wg-quick down wg0 || (sudo resolvconf -u && sudo wg-quick up wg0)",
+    "on-click": "test -d /sys/class/net/tailscale0 && tailscale down || tailscale up",
   },
 }
