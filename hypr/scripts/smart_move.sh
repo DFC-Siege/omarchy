@@ -5,10 +5,10 @@ log() { echo "[$(date '+%H:%M:%S')] $*" >> "$LOG"; }
 
 DIR=$1
 case $DIR in
-    l) MON="l" ;;
-    r) MON="r" ;;
-    u) MON="u" ;;
-    d) MON="d" ;;
+        l) MON="l" ;;
+        r) MON="r" ;;
+        u) MON="u" ;;
+        d) MON="d" ;;
 esac
 
 ACTIVE=$(hyprctl activewindow -j)
@@ -31,28 +31,35 @@ NEXT_CX=$(( $(echo "$NEXT" | jq -r '.at[0]') + NEXT_W / 2 ))
 NEXT_CY=$(( $(echo "$NEXT" | jq -r '.at[1]') + NEXT_H / 2 ))
 NEXT_MON=$(echo "$NEXT" | jq -r '.monitor')
 
+MON_INFO=$(hyprctl monitors -j)
+CUR_MON_Y=$(echo "$MON_INFO" | jq -r ".[] | select(.name == \"$CUR_MON\") | .y")
+NEXT_MON_Y=$(echo "$MON_INFO" | jq -r ".[] | select(.name == \"$NEXT_MON\") | .y")
+
 hyprctl dispatch focuswindow "address:$ADDR" > /dev/null
 
 if [ "$CUR_MON" != "$NEXT_MON" ]; then
-    log "Different monitors — moving $DIR"
-    hyprctl dispatch movewindow "$DIR"
+        log "Different monitors — moving $DIR"
+        hyprctl dispatch movewindow "$DIR"
+        ABS_CUR_CY=$(( CUR_CY + CUR_MON_Y ))
+        ABS_NEXT_CY=$(( NEXT_CY + NEXT_MON_Y ))
+        [ "$ABS_CUR_CY" -gt "$ABS_NEXT_CY" ] && { log "moving down"; hyprctl dispatch swapwindow "d"; }
 elif [[ "$DIR" == "l" || "$DIR" == "r" ]] && [ "$CUR_H" -ne "$NEXT_H" ]; then
-    log "Different heights (${CUR_H} vs ${NEXT_H}) — moving $DIR"
-    hyprctl dispatch movewindow "$DIR"
-    [[ "$DIR" == "r" ]] && [ "$CUR_CY" -gt "$NEXT_CY" ] && { log "moving down"; hyprctl dispatch movewindow "d"; }
-    [[ "$DIR" == "l" ]] && [ "$CUR_CY" -lt "$NEXT_CY" ] && { log "moving up";   hyprctl dispatch movewindow "u"; }
+        log "Different heights (${CUR_H} vs ${NEXT_H}) — moving $DIR"
+        hyprctl dispatch movewindow "$DIR"
+        [[ "$DIR" == "r" ]] && [ "$CUR_CY" -gt "$NEXT_CY" ] && { log "moving down"; hyprctl dispatch movewindow "d"; }
+        [[ "$DIR" == "l" ]] && [ "$CUR_CY" -lt "$NEXT_CY" ] && { log "moving up";   hyprctl dispatch movewindow "u"; }
 elif [[ "$DIR" == "u" || "$DIR" == "d" ]] && [ "$CUR_W" -ne "$NEXT_W" ]; then
-    log "Different widths (${CUR_W} vs ${NEXT_W}) — moving $DIR"
-    hyprctl dispatch movewindow "$DIR"
-    [[ "$DIR" == "u" ]] && [ "$CUR_CX" -lt "$NEXT_CX" ] && { log "moving left";  hyprctl dispatch movewindow "l"; }
-    [[ "$DIR" == "d" ]] && [ "$CUR_CX" -gt "$NEXT_CX" ] && { log "moving right"; hyprctl dispatch movewindow "r"; }
+        log "Different widths (${CUR_W} vs ${NEXT_W}) — moving $DIR"
+        hyprctl dispatch movewindow "$DIR"
+        [[ "$DIR" == "u" ]] && [ "$CUR_CX" -lt "$NEXT_CX" ] && { log "moving left";  hyprctl dispatch movewindow "l"; }
+        [[ "$DIR" == "d" ]] && [ "$CUR_CX" -gt "$NEXT_CX" ] && { log "moving right"; hyprctl dispatch movewindow "r"; }
 else
-    hyprctl dispatch movewindow "$DIR"
-    MOVED=$(hyprctl activewindow -j)
-    NEW_X=$(echo "$MOVED" | jq -r '.at[0]')
-    NEW_Y=$(echo "$MOVED" | jq -r '.at[1]')
-    if [ "$NEW_X" == "$CUR_X" ] && [ "$NEW_Y" == "$CUR_Y" ]; then
-        log "move failed — swapping $DIR"
-        hyprctl dispatch swapwindow "$DIR"
-    fi
+        hyprctl dispatch movewindow "$DIR"
+        MOVED=$(hyprctl activewindow -j)
+        NEW_X=$(echo "$MOVED" | jq -r '.at[0]')
+        NEW_Y=$(echo "$MOVED" | jq -r '.at[1]')
+        if [ "$NEW_X" == "$CUR_X" ] && [ "$NEW_Y" == "$CUR_Y" ]; then
+                log "move failed — swapping $DIR"
+                hyprctl dispatch swapwindow "$DIR"
+        fi
 fi
