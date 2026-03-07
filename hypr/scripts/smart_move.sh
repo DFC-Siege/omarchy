@@ -17,6 +17,7 @@ CUR_W=$(echo "$ACTIVE" | jq -r '.size[0]')
 CUR_H=$(echo "$ACTIVE" | jq -r '.size[1]')
 CUR_CX=$(( $(echo "$ACTIVE" | jq -r '.at[0]') + CUR_W / 2 ))
 CUR_CY=$(( $(echo "$ACTIVE" | jq -r '.at[1]') + CUR_H / 2 ))
+CUR_MON=$(echo "$ACTIVE" | jq -r '.monitor')
 
 hyprctl dispatch movefocus "$DIR" > /dev/null
 
@@ -26,30 +27,15 @@ NEXT_W=$(echo "$NEXT" | jq -r '.size[0]')
 NEXT_H=$(echo "$NEXT" | jq -r '.size[1]')
 NEXT_CX=$(( $(echo "$NEXT" | jq -r '.at[0]') + NEXT_W / 2 ))
 NEXT_CY=$(( $(echo "$NEXT" | jq -r '.at[1]') + NEXT_H / 2 ))
-
-WIN_COUNT=$(hyprctl clients -j | jq '[.[] | select(.workspace.id == '"$(hyprctl activewindow -j | jq '.workspace.id')"')] | length')
-
-MON_INFO=$(hyprctl monitors -j | jq '.[] | select(.focused == true)')
-MON_X=$(echo "$MON_INFO" | jq -r '.x')
-MON_Y=$(echo "$MON_INFO" | jq -r '.y')
-MON_W=$(echo "$MON_INFO" | jq -r '.width')
-MON_H=$(echo "$MON_INFO" | jq -r '.height')
-
-NEXT_AT_EDGE=false
-case $DIR in
-        l) [ "$NEXT_CX" -le "$MON_X" ] && NEXT_AT_EDGE=true ;;
-        r) [ $(( NEXT_CX + NEXT_W )) -ge $(( MON_X + MON_W )) ] && NEXT_AT_EDGE=true ;;
-        u) [ "$NEXT_CY" -le "$MON_Y" ] && NEXT_AT_EDGE=true ;;
-        d) [ $(( NEXT_CY + NEXT_H )) -ge $(( MON_Y + MON_H )) ] && NEXT_AT_EDGE=true ;;
-esac
-
-log "$NEXT_CX, $NEXT_W, $MON_W"
+NEXT_MON=$(echo "$NEXT" | jq -r '.monitor')
 
 hyprctl dispatch focuswindow "address:$ADDR" > /dev/null
 
-if [ "$ADDR" == "$NEXT_ADDR" ]; then
-        log "No neighbor — moving to monitor $MON"
-        hyprctl dispatch movewindow "mon:$MON"
+log "$CUR_MON | $NEXT_MON"
+
+if [ "$CUR_MON" != "$NEXT_MON" ]; then
+        log "moving $DIR"
+        hyprctl dispatch movewindow "$DIR"
 elif [[ "$DIR" == "l" || "$DIR" == "r" ]] && [ "$CUR_H" -ne "$NEXT_H" ]; then
         log "Different heights (${CUR_H} vs ${NEXT_H}) — moving $DIR"
         hyprctl dispatch movewindow "$DIR"
