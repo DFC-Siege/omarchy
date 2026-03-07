@@ -17,6 +17,8 @@ CUR_W=$(echo "$ACTIVE" | jq -r '.size[0]')
 CUR_H=$(echo "$ACTIVE" | jq -r '.size[1]')
 CUR_CX=$(( $(echo "$ACTIVE" | jq -r '.at[0]') + CUR_W / 2 ))
 CUR_CY=$(( $(echo "$ACTIVE" | jq -r '.at[1]') + CUR_H / 2 ))
+CUR_X=$(echo "$ACTIVE" | jq -r '.at[0]')
+CUR_Y=$(echo "$ACTIVE" | jq -r '.at[1]')
 CUR_MON=$(echo "$ACTIVE" | jq -r '.monitor')
 
 hyprctl dispatch movefocus "$DIR" > /dev/null
@@ -59,6 +61,14 @@ elif [[ "$DIR" == "u" || "$DIR" == "d" ]] && [ "$CUR_W" -ne "$NEXT_W" ]; then
                 hyprctl dispatch movewindow "r"
         fi
 else
-        log "swapwindow $DIR"
-        hyprctl dispatch swapwindow "$DIR"
+        log "try move window $DIR"
+        hyprctl dispatch movewindow "$DIR"
+        MOVED=$(hyprctl activewindow -j)
+        NEW_X=$(echo "$MOVED" | jq -r '.at[0]')
+        NEW_Y=$(echo "$MOVED" | jq -r '.at[1]')
+        log "New position: ${NEW_X},${NEW_Y} cur: ${CUR_X}, ${CUR_Y}"
+        if [ "$NEW_X" == "$CUR_X" ] && [ "$NEW_Y" == "$CUR_Y" ]; then
+                log "move failed, swap window $DIR"
+                hyprctl dispatch swapwindow "$DIR"
+        fi
 fi
