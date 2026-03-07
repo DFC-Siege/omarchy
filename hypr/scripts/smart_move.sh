@@ -35,6 +35,14 @@ if [ "$ADDR" == "$NEXT_ADDR" ]; then
 elif [[ "$DIR" == "l" || "$DIR" == "r" ]] && [ "$CUR_H" -ne "$NEXT_H" ]; then
         log "Different heights (${CUR_H} vs ${NEXT_H}) — moving $DIR"
         hyprctl dispatch movewindow "$DIR"
+        if [[ "$DIR" == "r" ]] && [ "$CUR_CY" -gt "$NEXT_CY" ]; then
+                log "moving down"
+                hyprctl dispatch movewindow "d"
+        fi
+        if [[ "$DIR" == "l" ]] && [ "$CUR_CY" -lt "$NEXT_CY" ]; then
+                log "moving up"
+                hyprctl dispatch movewindow "u"
+        fi
 elif [[ "$DIR" == "u" || "$DIR" == "d" ]] && [ "$CUR_W" -ne "$NEXT_W" ]; then
         log "Different widths (${CUR_W} vs ${NEXT_W}) — moving $DIR"
         hyprctl dispatch movewindow "$DIR"
