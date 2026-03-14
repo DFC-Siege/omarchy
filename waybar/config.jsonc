@@ -182,9 +182,9 @@
   },
   "custom/tailscale": {
     "format": "󰖂",
-    "exec": "test -d /sys/class/net/tailscale0 && echo '{\"class\": \"connected\", \"tooltip\": \"Tailscale Connected\"}' || echo '{\"class\": \"disconnected\", \"tooltip\": \"Tailscale Disconnected\"}'",
+    "exec": "~/.config/waybar/scripts/tailscale.sh",
     "return-type": "json",
     "interval": 2,
-    "on-click": "test -d /sys/class/net/tailscale0 && tailscale down || tailscale up",
+    "on-click": "bash -c 'if tailscale status &>/dev/null; then sudo tailscale down; else sudo tailscale up; fi'",
   },
 }
