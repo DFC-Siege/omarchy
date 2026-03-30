@@ -122,7 +122,7 @@ bfm() {
 
 idf() {
     if ! command -v idf.py &> /dev/null; then
-        source "$HOME/esp/esp-idf/export.sh" > /dev/null 2>&1
+        source "/opt/esp-idf/export.sh" > /dev/null 2>&1
     fi
 
     idf.py "$@"
