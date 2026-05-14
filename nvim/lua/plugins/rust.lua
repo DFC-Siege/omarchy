@@ -10,7 +10,7 @@ return {
             },
             cargo = {
               allFeatures = false,
-              features = {},
+              features = "all",
             },
           },
         },
