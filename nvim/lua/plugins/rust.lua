@@ -37,6 +37,10 @@ return {
             ra.cargo.allTargets = false
             ra.check = ra.check or {}
             ra.check.allTargets = false
+            -- Isolate RA's clippy cache from terminal `cargo build`/espflash runs.
+            -- Sharing one target dir makes rustc and clippy artifacts invalidate
+            -- each other, forcing repeated build-std `core` recompiles.
+            ra.check.extraArgs = { "--target-dir", "target/ra-check" }
           end
 
           return settings
