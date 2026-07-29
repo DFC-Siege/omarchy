@@ -1,0 +1,63 @@
+# Change the default Omarchy look'n'feel
+
+# https://wiki.hyprland.org/Configuring/Variables/#general
+general {
+    # No gaps between windows or borders
+    gaps_in = 8
+    gaps_out = 16
+    border_size = 4
+}
+
+# https://wiki.hyprland.org/Configuring/Variables/#decoration
+decoration {
+# Use round window corners
+        rounding = 32
+        active_opacity = 0.92
+        inactive_opacity = 0.76
+
+        blur {
+                size = 8
+        }
+}
+
+# https://wiki.hypr.land/Configuring/Variables/#layout
+layout {
+    # Avoid overly wide single-window layouts on wide screens
+    single_window_aspect_ratio = 16 9
+    # single_window_aspect_ratio_tolerance = 0.21
+}
+
+animations {
+    enabled = true
+    animation = workspaces, 1, 4, easeOutQuint, slidefade
+}
+
+dwindle {
+        preserve_split = false
+}
+
+plugin:hyprglass {
+    default_theme = dark
+    default_preset = clear
+    tint_color = 0x8899aa22
+
+    brightness = 0.9
+    dark:brightness = 0.82
+    light:adaptive_boost = 0.5
+
+    preset = name:clear, glass_opacity:0.8, blur_strength:1.5
+    preset = name:clear:dark, brightness:0.7
+    preset = name:clear:light, brightness:1.2
+
+    preset = name:contrasted, inherits:high_contrast, contrast:1.2, adaptive_dim:1.5
+    preset = name:contrasted:dark, tint_color:0x02142aa9
+
+    layers {
+        enabled = 1
+        namespaces = waybar, swaync, quickshell:bezel
+        exclude_namespaces = debug-panel
+        preset = subtle
+        namespace_presets = quickshell:bezel:ui
+        namespace_mask_thresholds = waybar=0.05, quickshell:bezel=0.3
+    }
+}
