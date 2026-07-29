@@ -125,9 +125,9 @@ tooltip {
 }
 
 #custom-wireguard.connected {
-  color: #a55555;
+  color: @foreground;
 }
 
 #custom-wireguard.disconnected {
-  opacity: 0.5;
+  opacity: 0.4;
 }

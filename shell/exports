@@ -6,3 +6,6 @@ export TERMINAL=kitty
 export PICO_SDK_PATH=/usr/share/pico-sdk
 export GOPRIVATE=gitlab.wijdoendingen.nl
 export PATH="$HOME/.config/emacs/bin:$PATH"
+export ANDROID_HOME="$HOME/Android/Sdk"
+export PATH="$PATH:$ANDROID_HOME/platform-tools"
+export CAPACITOR_ANDROID_STUDIO_PATH="/opt/android-studio/bin/studio.sh"

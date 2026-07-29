@@ -4,6 +4,7 @@ source ~/.config/shell/exports
 source ~/.config/shell/aliases
 source ~/.config/shell/functions
 source ~/.config/shell/plugins
+source ~/export-esp.sh
 
 HISTSIZE=10000
 SAVEHIST=20000

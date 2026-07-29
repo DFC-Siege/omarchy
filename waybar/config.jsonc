@@ -16,7 +16,7 @@
     "group/tray-expander",
     "bluetooth",
     "network",
-    "custom/tailscale",
+    "custom/wireguard",
     "pulseaudio",
     "cpu",
     "battery",
@@ -181,11 +181,11 @@
     "icon-size": 12,
     "spacing": 12,
   },
-  "custom/tailscale": {
-    "format": "󰖂",
-    "exec": "~/.config/waybar/scripts/tailscale.sh",
+  "custom/wireguard": {
+    "format": "{}",
+    "exec": "~/.config/waybar/scripts/wireguard.sh",
     "return-type": "json",
     "interval": 2,
-    "on-click": "bash -c 'if tailscale status &>/dev/null; then sudo tailscale down; else sudo tailscale up; fi'",
+    "on-click": "omarchy-launch-or-focus-tui wg-tui",
   },
 }
