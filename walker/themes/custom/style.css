@@ -2,9 +2,15 @@
 
 .box-wrapper {
   border-radius: 2em;
+  background: alpha(@background, 0.6);
+}
+
+.box {
+  background: transparent;
 }
 
 .search-container {
   border-radius: 2em;
   padding-left: 1em;
+  background: alpha(@background, 0.3);
 }
