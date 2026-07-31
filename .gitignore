@@ -34,6 +34,7 @@ walker/*
 !waybar/
 waybar/*
 !waybar/config.jsonc
+!waybar/modules.jsonc
 !waybar/scripts/
 !waybar/scripts/*
 !waybar/style.css
