@@ -1,6 +1,7 @@
 *
 !.gitignore
 !README.md
+!xdg-terminals.list
 !hypr/
 !hypr/**
 !scripts/
