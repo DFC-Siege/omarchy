@@ -10,7 +10,7 @@ CACHE_DIR="${AUR_CACHE_DIR:-$HOME/.cache/$HELPER}"
 WORKDIR=""
 
 usage() {
-    cat <<EOF
+        cat <<EOF
 aur-audit — check installed AUR packages for changes, orphans, and sketchy PKGBUILDs
 
 Usage: aur-audit [options] [pkg...]
@@ -18,9 +18,13 @@ Usage: aur-audit [options] [pkg...]
   (no args)     audit every installed AUR package (pacman -Qqm)
   pkg...        audit only the named packages
 
+Package names are resolved to their pkgbase (the AUR git repo), so split
+packages are audited once, under the base name.
+
 Options:
   -k, --keep    keep the fetched PKGBUILDs (prints the temp dir) instead of deleting
   -q, --quiet   only print packages that are flagged, changed, or orphaned
+  -j, --jobs N  fetch N PKGBUILDs in parallel (default: 4)
   -h, --help    show this help
 
 Env:
@@ -31,32 +35,62 @@ EOF
 
 KEEP=0
 QUIET=0
+JOBS=4
 PKGS=()
 while [[ $# -gt 0 ]]; do
-    case "$1" in
-        -k|--keep)  KEEP=1 ;;
-        -q|--quiet) QUIET=1 ;;
-        -h|--help)  usage; exit 0 ;;
-        -*)         echo "unknown option: $1" >&2; usage >&2; exit 2 ;;
-        *)          PKGS+=("$1") ;;
-    esac
-    shift
+        case "$1" in
+        -k | --keep) KEEP=1 ;;
+        -q | --quiet) QUIET=1 ;;
+        -j | --jobs)
+                JOBS="${2-}"
+                shift
+                ;;
+        -h | --help)
+                usage
+                exit 0
+                ;;
+        -*)
+                echo "unknown option: $1" >&2
+                usage >&2
+                exit 2
+                ;;
+        *) PKGS+=("$1") ;;
+        esac
+        shift
 done
 
-command -v "$HELPER" >/dev/null || { echo "error: '$HELPER' not found" >&2; exit 1; }
+[[ "$JOBS" =~ ^[1-9][0-9]*$ ]] || {
+        echo "error: --jobs needs a positive integer" >&2
+        exit 2
+}
+
+command -v "$HELPER" >/dev/null || {
+        echo "error: '$HELPER' not found" >&2
+        exit 1
+}
 
 if [[ -t 1 ]]; then
-    R=$'\e[31m'; G=$'\e[32m'; Y=$'\e[33m'; B=$'\e[1m'; D=$'\e[2m'; N=$'\e[0m'
+        R=$'\e[31m'
+        G=$'\e[32m'
+        Y=$'\e[33m'
+        B=$'\e[1m'
+        D=$'\e[2m'
+        N=$'\e[0m'
 else
-    R=""; G=""; Y=""; B=""; D=""; N=""
+        R=""
+        G=""
+        Y=""
+        B=""
+        D=""
+        N=""
 fi
 
 cleanup() {
-    if [[ -n "$WORKDIR" && $KEEP -eq 0 ]]; then
-        rm -rf "$WORKDIR"
-    elif [[ -n "$WORKDIR" ]]; then
-        echo "fetched PKGBUILDs kept in: $WORKDIR"
-    fi
+        if [[ -n "$WORKDIR" && $KEEP -eq 0 ]]; then
+                rm -rf "$WORKDIR"
+        elif [[ -n "$WORKDIR" ]]; then
+                echo "fetched PKGBUILDs kept in: $WORKDIR"
+        fi
 }
 trap cleanup EXIT
 
@@ -64,98 +98,171 @@ trap cleanup EXIT
 # or its install/sh scripts. Cheap greps, tuned to skip the usual false positives
 # (dep names, echoed instructions, obfuscated maintainer emails).
 scan() {
-    local file="$1"
-    grep -nE '(curl|wget)[^|]*\|[[:space:]]*(sudo[[:space:]]+)?(ba|z|d)?sh' "$file" \
-        | sed 's/^/RED|pipe-to-shell: /' || true
-    grep -nE '(^|[^[:alnum:]_])(curl|wget)[[:space:]]' "$file" \
-        | grep -vE '#|noextract|_url=|source=' \
-        | sed 's/^/YEL|build-time network: /' || true
-    grep -nE '(^|[[:space:]])eval[[:space:]]|base64[[:space:]]+(-d|--decode)|xxd[[:space:]]+-r' "$file" \
-        | grep -vE '^[0-9]+:#|Maintainer|Contributor' \
-        | sed 's/^/RED|eval-or-decode: /' || true
-    grep -nE '(^|[[:space:]])sudo[[:space:]]' "$file" \
-        | grep -vE 'optdepends|depends=|echo|#|makedepends' \
-        | sed 's/^/RED|sudo-in-build: /' || true
-    grep -nE '["'\'' =]http://[^"'\'' ]' "$file" \
-        | grep -vE '^[0-9]+:#' \
-        | sed 's/^/YEL|non-https-source: /' || true
-    grep -nE '>[[:space:]]*/(etc|usr|opt|bin|home|root)/' "$file" \
-        | sed 's/^/RED|write-outside-pkgdir: /' || true
+        local file="$1"
+        grep -nE '(curl|wget)[^|]*\|[[:space:]]*(sudo[[:space:]]+)?(ba|z|d)?sh' "$file" |
+                sed 's/^/RED|pipe-to-shell: /' || true
+        grep -nE '(^|[^[:alnum:]_])(curl|wget)[[:space:]]' "$file" |
+                grep -vE '#|noextract|_url=|source=' |
+                sed 's/^/YEL|build-time network: /' || true
+        grep -nE '(^|[[:space:]])eval[[:space:]]|base64[[:space:]]+(-d|--decode)|xxd[[:space:]]+-r' "$file" |
+                grep -vE '^[0-9]+:#|Maintainer|Contributor' |
+                sed 's/^/RED|eval-or-decode: /' || true
+        grep -nE '(^|[[:space:]])sudo[[:space:]]' "$file" |
+                grep -vE 'optdepends|depends=|echo|#|makedepends' |
+                sed 's/^/RED|sudo-in-build: /' || true
+        grep -nE '["'\'' =]http://[^"'\'' ]' "$file" |
+                grep -vE '^[0-9]+:#' |
+                sed 's/^/YEL|non-https-source: /' || true
+        grep -nE '>[[:space:]]*/(etc|usr|opt|bin|home|root)/' "$file" |
+                sed 's/^/RED|write-outside-pkgdir: /' || true
+        # A 'SKIP' checksum is fine for VCS sources (git+/svn+…) but means an
+        # unverified download when a plain http(s)/ftp URL sits in source=().
+        # Only scan the source array so url=/homepage/comment lines can't misfire.
+        if grep -qE "'SKIP'" "$file"; then
+                local remote
+                remote="$(awk '
+            /^[[:space:]]*(source|source_[[:alnum:]_]+)[[:space:]]*\+?=[[:space:]]*\(/ {s=1}
+            s {print}
+            s && /\)/ {s=0}
+        ' "$file" |
+                        grep -oiE "[a-z]+(\+[a-z]+)?://[^\"' )]+" |
+                        grep -viE '\+[a-z]+://' | grep -iE '^(https?|ftp)://' | head -1 || true)"
+                if [[ -n "$remote" ]]; then
+                        printf 'YEL|skip-checksum on remote source (%s): %s\n' "$remote" "$file"
+                fi
+        fi
+}
+
+# Fetch each pkgbase's AUR repo into $WORKDIR, up to $1 at a time.
+fetch_all() {
+        local jobs="$1"
+        shift
+        local b
+        for b in "$@"; do
+                (cd "$WORKDIR" && "$HELPER" -G "$b" >/dev/null 2>&1) &
+                while (($(jobs -rp | wc -l) >= jobs)); do wait -n || true; done
+        done
+        wait || true
+        # Concurrent AUR fetches get rate-limited, so retry any miss serially before
+        # the caller mistakes a throttled fetch for an orphaned package.
+        for b in "$@"; do
+                [[ -f "$WORKDIR/$b/PKGBUILD" ]] && continue
+                rm -rf "${WORKDIR:?}/$b"
+                (cd "$WORKDIR" && "$HELPER" -G "$b" >/dev/null 2>&1) || true
+        done
 }
 
 if [[ ${#PKGS[@]} -eq 0 ]]; then
-    mapfile -t PKGS < <(pacman -Qqm)
+        mapfile -t PKGS < <(pacman -Qqm)
 fi
-[[ ${#PKGS[@]} -gt 0 ]] || { echo "no foreign (AUR) packages installed."; exit 0; }
+[[ ${#PKGS[@]} -gt 0 ]] || {
+        echo "no foreign (AUR) packages installed."
+        exit 0
+}
+
+# Resolve each pkgname to its pkgbase (the AUR repo) and dedup — split packages
+# share one base, and yay -G clones/caches by base, not by member name.
+declare -A seen_base
+BASES=()
+for p in "${PKGS[@]}"; do
+        b="$(LC_ALL=C pacman -Qi "$p" 2>/dev/null | sed -n 's/^Base *: *//p')"
+        [[ -z "$b" || "$b" == "None" ]] && b="$p"
+        [[ -n "${seen_base[$b]:-}" ]] && continue
+        seen_base[$b]=1
+        BASES+=("$b")
+done
 
 WORKDIR="$(mktemp -d /tmp/aur-audit.XXXXXX)"
 
-echo "${B}Auditing ${#PKGS[@]} AUR package(s)…${N}"
+echo "${B}Auditing ${#BASES[@]} AUR package(s)…${N} ${D}(fetching, -j$JOBS)${N}"
+fetch_all "$JOBS" "${BASES[@]}"
 echo
 
-n_ok=0; n_changed=0; n_flagged=0; n_orphan=0
-orphans=(); flagged=(); changed=()
+n_ok=0
+n_changed=0
+n_flagged=0
+n_orphan=0
+orphans=()
+flagged=()
+changed=()
 
-for p in "${PKGS[@]}"; do
-    live="$WORKDIR/$p/PKGBUILD"
-    cache="$CACHE_DIR/$p/PKGBUILD"
+for b in "${BASES[@]}"; do
+        live="$WORKDIR/$b/PKGBUILD"
+        cache="$CACHE_DIR/$b/PKGBUILD"
 
-    if ! ( cd "$WORKDIR" && "$HELPER" -G "$p" >/dev/null 2>&1 ) || [[ ! -f "$live" ]]; then
-        n_orphan=$((n_orphan+1)); orphans+=("$p")
-        printf '%s● %-28s%s %sORPHANED%s  not on AUR (no updates/fixes)\n' \
-            "$R" "$p" "$N" "$R" "$N"
-        continue
-    fi
+        if [[ ! -f "$live" ]]; then
+                n_orphan=$((n_orphan + 1))
+                orphans+=("$b")
+                printf '%s● %-28s%s %sORPHANED%s  not on AUR (no updates/fixes)\n' \
+                        "$R" "$b" "$N" "$R" "$N"
+                continue
+        fi
 
-    findings=""
-    findings+="$(scan "$live")"$'\n'
-    while IFS= read -r extra; do
-        [[ -n "$extra" ]] && findings+="$(scan "$extra")"$'\n'
-    done < <(find "$WORKDIR/$p" -maxdepth 1 \( -name '*.install' -o -name '*.sh' \) 2>/dev/null)
-    findings="$(printf '%s' "$findings" | grep -v '^$' || true)"
+        findings=""
+        findings+="$(scan "$live")"$'\n'
+        while IFS= read -r extra; do
+                [[ -n "$extra" ]] && findings+="$(scan "$extra")"$'\n'
+        done < <(find "$WORKDIR/$b" -maxdepth 1 \( -name '*.install' -o -name '*.sh' \) 2>/dev/null)
+        findings="$(printf '%s' "$findings" | grep -v '^$' || true)"
 
-    diffstat=""
-    if [[ -f "$cache" ]]; then
-        diff -q "$cache" "$live" >/dev/null 2>&1 || diffstat="changed"
-    else
-        diffstat="no-cache"
-    fi
+        diffstat=""
+        if [[ -f "$cache" ]]; then
+                diff -q "$cache" "$live" >/dev/null 2>&1 || diffstat="changed"
+        else
+                diffstat="no-cache"
+        fi
 
-    reds="$(printf '%s\n' "$findings" | grep -c '^RED|' || true)"
-    yels="$(printf '%s\n' "$findings" | grep -c '^YEL|' || true)"
+        reds="$(printf '%s\n' "$findings" | grep -c '^RED|' || true)"
+        yels="$(printf '%s\n' "$findings" | grep -c '^YEL|' || true)"
 
-    status="$G● "; label="${G}CLEAN${N}   "; bump=ok
-    if [[ "$reds" -gt 0 ]]; then
-        status="$R● "; label="${R}FLAGGED${N} "; bump=flagged
-    elif [[ "$yels" -gt 0 ]]; then
-        status="$Y● "; label="${Y}REVIEW${N}  "; bump=flagged
-    elif [[ "$diffstat" == "changed" ]]; then
-        status="$Y● "; label="${Y}CHANGED${N} "; bump=changed
-    fi
+        status="$G● "
+        label="${G}CLEAN${N}   "
+        bump=ok
+        if [[ "$reds" -gt 0 ]]; then
+                status="$R● "
+                label="${R}FLAGGED${N} "
+                bump=flagged
+        elif [[ "$yels" -gt 0 ]]; then
+                status="$Y● "
+                label="${Y}REVIEW${N}  "
+                bump=flagged
+        elif [[ "$diffstat" == "changed" ]]; then
+                status="$Y● "
+                label="${Y}CHANGED${N} "
+                bump=changed
+        fi
 
-    note=""
-    [[ "$diffstat" == "changed" ]]  && note="${D}differs from installed cache${N}"
-    [[ "$diffstat" == "no-cache" ]] && note="${D}not in local cache${N}"
+        note=""
+        [[ "$diffstat" == "changed" ]] && note="${D}differs from installed cache${N}"
+        [[ "$diffstat" == "no-cache" ]] && note="${D}not in local cache${N}"
 
-    if [[ "$bump" == "ok" && $QUIET -eq 1 && "$diffstat" != "changed" ]]; then
-        n_ok=$((n_ok+1)); continue
-    fi
+        if [[ "$bump" == "ok" && $QUIET -eq 1 && "$diffstat" != "changed" ]]; then
+                n_ok=$((n_ok + 1))
+                continue
+        fi
 
-    printf '%s%-28s%s %s %s\n' "$status" "$p" "$N" "$label" "$note"
+        printf '%s%-28s%s %s %s\n' "$status" "$b" "$N" "$label" "$note"
 
-    if [[ -n "$findings" ]]; then
-        while IFS='|' read -r sev msg; do
-            [[ -z "$sev" ]] && continue
-            col="$Y"; [[ "$sev" == "RED" ]] && col="$R"
-            printf '    %s→ %s%s\n' "$col" "$msg" "$N"
-        done <<< "$findings"
-    fi
+        if [[ -n "$findings" ]]; then
+                while IFS='|' read -r sev msg; do
+                        [[ -z "$sev" ]] && continue
+                        col="$Y"
+                        [[ "$sev" == "RED" ]] && col="$R"
+                        printf '    %s→ %s%s\n' "$col" "$msg" "$N"
+                done <<<"$findings"
+        fi
 
-    case "$bump" in
-        ok)      n_ok=$((n_ok+1)) ;;
-        changed) n_changed=$((n_changed+1)); changed+=("$p") ;;
-        flagged) n_flagged=$((n_flagged+1)); flagged+=("$p") ;;
-    esac
+        case "$bump" in
+        ok) n_ok=$((n_ok + 1)) ;;
+        changed)
+                n_changed=$((n_changed + 1))
+                changed+=("$b")
+                ;;
+        flagged)
+                n_flagged=$((n_flagged + 1))
+                flagged+=("$b")
+                ;;
+        esac
 done
 
 echo
