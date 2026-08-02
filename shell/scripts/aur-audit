@@ -1,0 +1,172 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+# Audit installed AUR packages: fetch live PKGBUILDs, diff against the local
+# yay build cache, scan both for suspicious patterns, and flag orphaned
+# (no-longer-on-AUR) packages.
+
+HELPER="${AUR_HELPER:-yay}"
+CACHE_DIR="${AUR_CACHE_DIR:-$HOME/.cache/$HELPER}"
+WORKDIR=""
+
+usage() {
+    cat <<EOF
+aur-audit — check installed AUR packages for changes, orphans, and sketchy PKGBUILDs
+
+Usage: aur-audit [options] [pkg...]
+
+  (no args)     audit every installed AUR package (pacman -Qqm)
+  pkg...        audit only the named packages
+
+Options:
+  -k, --keep    keep the fetched PKGBUILDs (prints the temp dir) instead of deleting
+  -q, --quiet   only print packages that are flagged, changed, or orphaned
+  -h, --help    show this help
+
+Env:
+  AUR_HELPER     AUR helper to use for -G     (default: yay)
+  AUR_CACHE_DIR  helper build cache location  (default: ~/.cache/\$AUR_HELPER)
+EOF
+}
+
+KEEP=0
+QUIET=0
+PKGS=()
+while [[ $# -gt 0 ]]; do
+    case "$1" in
+        -k|--keep)  KEEP=1 ;;
+        -q|--quiet) QUIET=1 ;;
+        -h|--help)  usage; exit 0 ;;
+        -*)         echo "unknown option: $1" >&2; usage >&2; exit 2 ;;
+        *)          PKGS+=("$1") ;;
+    esac
+    shift
+done
+
+command -v "$HELPER" >/dev/null || { echo "error: '$HELPER' not found" >&2; exit 1; }
+
+if [[ -t 1 ]]; then
+    R=$'\e[31m'; G=$'\e[32m'; Y=$'\e[33m'; B=$'\e[1m'; D=$'\e[2m'; N=$'\e[0m'
+else
+    R=""; G=""; Y=""; B=""; D=""; N=""
+fi
+
+cleanup() {
+    if [[ -n "$WORKDIR" && $KEEP -eq 0 ]]; then
+        rm -rf "$WORKDIR"
+    elif [[ -n "$WORKDIR" ]]; then
+        echo "fetched PKGBUILDs kept in: $WORKDIR"
+    fi
+}
+trap cleanup EXIT
+
+# Emit "SEVERITY|message" lines for anything worth a human's eyes in a PKGBUILD
+# or its install/sh scripts. Cheap greps, tuned to skip the usual false positives
+# (dep names, echoed instructions, obfuscated maintainer emails).
+scan() {
+    local file="$1"
+    grep -nE '(curl|wget)[^|]*\|[[:space:]]*(sudo[[:space:]]+)?(ba|z|d)?sh' "$file" \
+        | sed 's/^/RED|pipe-to-shell: /' || true
+    grep -nE '(^|[^[:alnum:]_])(curl|wget)[[:space:]]' "$file" \
+        | grep -vE '#|noextract|_url=|source=' \
+        | sed 's/^/YEL|build-time network: /' || true
+    grep -nE '(^|[[:space:]])eval[[:space:]]|base64[[:space:]]+(-d|--decode)|xxd[[:space:]]+-r' "$file" \
+        | grep -vE '^[0-9]+:#|Maintainer|Contributor' \
+        | sed 's/^/RED|eval-or-decode: /' || true
+    grep -nE '(^|[[:space:]])sudo[[:space:]]' "$file" \
+        | grep -vE 'optdepends|depends=|echo|#|makedepends' \
+        | sed 's/^/RED|sudo-in-build: /' || true
+    grep -nE '["'\'' =]http://[^"'\'' ]' "$file" \
+        | grep -vE '^[0-9]+:#' \
+        | sed 's/^/YEL|non-https-source: /' || true
+    grep -nE '>[[:space:]]*/(etc|usr|opt|bin|home|root)/' "$file" \
+        | sed 's/^/RED|write-outside-pkgdir: /' || true
+}
+
+if [[ ${#PKGS[@]} -eq 0 ]]; then
+    mapfile -t PKGS < <(pacman -Qqm)
+fi
+[[ ${#PKGS[@]} -gt 0 ]] || { echo "no foreign (AUR) packages installed."; exit 0; }
+
+WORKDIR="$(mktemp -d /tmp/aur-audit.XXXXXX)"
+
+echo "${B}Auditing ${#PKGS[@]} AUR package(s)…${N}"
+echo
+
+n_ok=0; n_changed=0; n_flagged=0; n_orphan=0
+orphans=(); flagged=(); changed=()
+
+for p in "${PKGS[@]}"; do
+    live="$WORKDIR/$p/PKGBUILD"
+    cache="$CACHE_DIR/$p/PKGBUILD"
+
+    if ! ( cd "$WORKDIR" && "$HELPER" -G "$p" >/dev/null 2>&1 ) || [[ ! -f "$live" ]]; then
+        n_orphan=$((n_orphan+1)); orphans+=("$p")
+        printf '%s● %-28s%s %sORPHANED%s  not on AUR (no updates/fixes)\n' \
+            "$R" "$p" "$N" "$R" "$N"
+        continue
+    fi
+
+    findings=""
+    findings+="$(scan "$live")"$'\n'
+    while IFS= read -r extra; do
+        [[ -n "$extra" ]] && findings+="$(scan "$extra")"$'\n'
+    done < <(find "$WORKDIR/$p" -maxdepth 1 \( -name '*.install' -o -name '*.sh' \) 2>/dev/null)
+    findings="$(printf '%s' "$findings" | grep -v '^$' || true)"
+
+    diffstat=""
+    if [[ -f "$cache" ]]; then
+        diff -q "$cache" "$live" >/dev/null 2>&1 || diffstat="changed"
+    else
+        diffstat="no-cache"
+    fi
+
+    reds="$(printf '%s\n' "$findings" | grep -c '^RED|' || true)"
+    yels="$(printf '%s\n' "$findings" | grep -c '^YEL|' || true)"
+
+    status="$G● "; label="${G}CLEAN${N}   "; bump=ok
+    if [[ "$reds" -gt 0 ]]; then
+        status="$R● "; label="${R}FLAGGED${N} "; bump=flagged
+    elif [[ "$yels" -gt 0 ]]; then
+        status="$Y● "; label="${Y}REVIEW${N}  "; bump=flagged
+    elif [[ "$diffstat" == "changed" ]]; then
+        status="$Y● "; label="${Y}CHANGED${N} "; bump=changed
+    fi
+
+    note=""
+    [[ "$diffstat" == "changed" ]]  && note="${D}differs from installed cache${N}"
+    [[ "$diffstat" == "no-cache" ]] && note="${D}not in local cache${N}"
+
+    if [[ "$bump" == "ok" && $QUIET -eq 1 && "$diffstat" != "changed" ]]; then
+        n_ok=$((n_ok+1)); continue
+    fi
+
+    printf '%s%-28s%s %s %s\n' "$status" "$p" "$N" "$label" "$note"
+
+    if [[ -n "$findings" ]]; then
+        while IFS='|' read -r sev msg; do
+            [[ -z "$sev" ]] && continue
+            col="$Y"; [[ "$sev" == "RED" ]] && col="$R"
+            printf '    %s→ %s%s\n' "$col" "$msg" "$N"
+        done <<< "$findings"
+    fi
+
+    case "$bump" in
+        ok)      n_ok=$((n_ok+1)) ;;
+        changed) n_changed=$((n_changed+1)); changed+=("$p") ;;
+        flagged) n_flagged=$((n_flagged+1)); flagged+=("$p") ;;
+    esac
+done
+
+echo
+echo "${B}Summary${N}"
+printf '  %sclean%s     %d\n' "$G" "$N" "$n_ok"
+printf '  %schanged%s   %d%s\n' "$Y" "$N" "$n_changed" "$([[ $n_changed -gt 0 ]] && echo "  (${changed[*]})")"
+printf '  %sflagged%s   %d%s\n' "$R" "$N" "$n_flagged" "$([[ $n_flagged -gt 0 ]] && echo "  (${flagged[*]})")"
+printf '  %sorphaned%s  %d%s\n' "$R" "$N" "$n_orphan" "$([[ $n_orphan -gt 0 ]] && echo "  (${orphans[*]})")"
+
+echo
+echo "${D}Tip: diff a changed pkg:  diff ${CACHE_DIR}/<pkg>/PKGBUILD <(${HELPER} -G <pkg> -f 2>/dev/null; cat <pkg>/PKGBUILD)${N}"
+echo "${D}     -k keeps fetched PKGBUILDs for manual review.${N}"
+
+[[ $n_flagged -gt 0 || $n_orphan -gt 0 ]] && exit 1 || exit 0
