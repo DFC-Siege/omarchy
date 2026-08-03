@@ -11,3 +11,4 @@ vim.opt.shiftwidth = 8
 vim.opt.smartindent = true
 vim.g.lazyvim_php_lsp = "intelephense"
 vim.opt.relativenumber = true
+vim.lsp.set_log_level("off")
