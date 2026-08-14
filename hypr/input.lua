@@ -2,19 +2,19 @@
 -- See https://wiki.hypr.land/Configuring/Basics/Variables/#input
 
 hl.config({
-  input = {
-    kb_options = "compose:caps",
+	input = {
+		kb_options = "compose:caps",
 
-    repeat_rate = 40,
-    repeat_delay = 600,
+		repeat_rate = 40,
+		repeat_delay = 600,
 
-    numlock_by_default = true,
+		numlock_by_default = true,
 
-    touchpad = {
-      natural_scroll = true,
-      scroll_factor = 0.4,
-    },
-  },
+		touchpad = {
+			natural_scroll = true,
+			scroll_factor = 0.4,
+		},
+	},
 })
 
 -- Scroll nicely in the terminal
