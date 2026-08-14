@@ -2,14 +2,14 @@ hl.config({
 	general = {
 		gaps_in = 8,
 		gaps_out = 16,
-		border_size = 0,
+		border_size = 2,
 	},
 
 	decoration = {
 		rounding = 32,
 
 		blur = {
-			enabled = true,
+			enabled = false,
 			size = 8,
 		},
 
@@ -46,7 +46,7 @@ if hl.plugin.hyprglass then
 	local hyprglass = hl.plugin.hyprglass
 
 	hyprglass.config({
-		enabled = false,
+		enabled = true,
 		default_theme = "dark",
 
 		glass_opacity = 1.2,

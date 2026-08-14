@@ -1,2 +1,11 @@
+[bar]
+background-alpha = 0.5
+islands = true
+margin = 16
+margin-bottom = 0
+island-padding-x = 16
+island-padding-y = 2
+island-radius = 32
+
 [font]
-base-size = 11
+base-size = 13
