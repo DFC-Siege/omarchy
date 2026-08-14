@@ -7,5 +7,9 @@ island-padding-x = 16
 island-padding-y = 2
 island-radius = 32
 
+[menu]
+background-alpha = 0.4
+scrim-alpha = 0.0
+
 [font]
 base-size = 13

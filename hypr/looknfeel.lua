@@ -72,9 +72,9 @@ if hl.plugin.hyprglass then
 	})
 
 	hyprglass.layer("omarchy-bar")
+	hyprglass.layer("omarchy-menu")
 
 	for _, namespace in ipairs({
-		"omarchy-menu",
 		"omarchy-image-selector",
 		"omarchy-emojis",
 		"omarchy-clipboard",
