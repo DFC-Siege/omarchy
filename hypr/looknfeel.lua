@@ -52,7 +52,7 @@ o.window({ tag = "chromium-based-browser" }, { opacity = "0.88 0.82" })
 
 -- Omarchy pins steam and Unity at opacity 1 via class rules, so both need the
 -- default-opacity tag dropped along with their own opacity.
-o.window("steam.*", { tag = "-default-opacity", opacity = "0.72 0.62" })
+o.window("steam.*", { tag = "-default-opacity", opacity = "0.88 0.82" })
 o.window("^(Unity|unityhub)$", { tag = "-default-opacity", opacity = "0.88 0.82" })
 
 -- Skipped when hyprpm hasn't loaded the plugin yet, so a plugin-less session
