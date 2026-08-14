@@ -37,6 +37,10 @@ hl.config({
 
 hl.animation({ leaf = "workspaces", enabled = true, speed = 4, bezier = "easeOutQuint", style = "slidefade" })
 
+-- Omarchy disables fadeSwitch, which is what fades a window between the active
+-- and inactive opacity below. Speed is in deciseconds, so 2.5 = 250ms.
+hl.animation({ leaf = "fadeSwitch", enabled = true, speed = 2.5, bezier = "easeOutQuint" })
+
 -- Uniform whole-window transparency. Window rules beat decoration:active_opacity,
 -- and Omarchy pins several groups at near-opaque values in default/hypr/apps
 -- (terminal 0.985/0.96, browsers 1.0/0.985), so each group needs its own override
@@ -90,7 +94,20 @@ if hl.plugin.hyprglass then
 		layers = { enabled = 1 },
 	})
 
-	-- Quattro replaced waybar/walker with the Quickshell bar and menus.
-	-- hyprglass.layer("omarchy-bar")
-	-- hyprglass.layer("omarchy-menu")
+	-- Quattro replaced waybar/walker with the Quickshell surfaces. Only the bar
+	-- gets glass; the menus and popups draw their own material and double up
+	-- badly, so they're excluded by name.
+	hyprglass.layer("omarchy-bar")
+
+	for _, namespace in ipairs({
+		"omarchy-menu",
+		"omarchy-image-selector",
+		"omarchy-emojis",
+		"omarchy-clipboard",
+		"omarchy-keyboard-panel",
+		"omarchy-notifications",
+		"omarchy-osd",
+	}) do
+		hyprglass.layer(namespace, { exclude = true })
+	end
 end
