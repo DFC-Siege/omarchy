@@ -1,6 +1,8 @@
 -- Personal keybinding overrides.
 -- See current bindings and descriptions: omarchy menu keybindings --print
 
+local smart_move = require("hypr.smart_move")
+
 -- Apps
 o.bind("SUPER + E", "File manager", { omarchy = "nautilus" })
 o.bind("SUPER + B", "Browser", { launch = "zen-browser --new-window" })
@@ -51,10 +53,10 @@ hl.unbind("SUPER + SHIFT + RIGHT")
 hl.unbind("SUPER + SHIFT + UP")
 hl.unbind("SUPER + SHIFT + DOWN")
 
-o.bind("SUPER + SHIFT + H", "Swap window to the left", hl.dsp.window.swap({ direction = "l" }))
-o.bind("SUPER + SHIFT + J", "Swap window down", hl.dsp.window.swap({ direction = "d" }))
-o.bind("SUPER + SHIFT + K", "Swap window up", hl.dsp.window.swap({ direction = "u" }))
-o.bind("SUPER + SHIFT + L", "Swap window to the right", hl.dsp.window.swap({ direction = "r" }))
+o.bind("SUPER + SHIFT + H", "Move window left", function() smart_move.move("l") end)
+o.bind("SUPER + SHIFT + J", "Move window down", function() smart_move.move("d") end)
+o.bind("SUPER + SHIFT + K", "Move window up", function() smart_move.move("u") end)
+o.bind("SUPER + SHIFT + L", "Move window right", function() smart_move.move("r") end)
 
 -- Resize windows
 o.bind("SUPER + semicolon", "Shrink window width", hl.dsp.window.resize({ x = -100, y = 0, relative = true }))
