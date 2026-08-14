@@ -1,50 +1,85 @@
 -- Change the default Omarchy look'n'feel.
 
--- https://wiki.hypr.land/Configuring/Basics/Variables/#general
--- hl.config({
---   general = {
---     -- No gaps between windows or borders.
---     gaps_in = 0,
---     gaps_out = 0,
---     border_size = 0,
+hl.config({
+  general = {
+    gaps_in = 8,
+    gaps_out = 16,
+    border_size = 0,
+  },
+
+  decoration = {
+    rounding = 36,
+    active_opacity = 1.0,
+    inactive_opacity = 1.0,
+
+    blur = {
+      size = 8,
+    },
+
+    -- Soft, wide, low-opacity drop shadow - macOS window elevation
+    shadow = {
+      enabled = true,
+      range = 20,
+      render_power = 3,
+      color = "rgba(00000059)",
+      offset = { 0, 6 },
+    },
+  },
+
+  animations = {
+    enabled = true,
+  },
+
+  dwindle = {
+    preserve_split = false,
+  },
+})
+
+hl.animation({ leaf = "workspaces", enabled = true, speed = 4, bezier = "easeOutQuint", style = "slidefade" })
+
+-- Uniform whole-window transparency. Window rules beat decoration:active_opacity,
+-- and Omarchy pins several groups at near-opaque values in default/hypr/apps
+-- (terminal 0.985/0.96, browsers 1.0/0.985), so each group needs its own override
+-- or it stays opaque.
+o.window({ tag = "default-opacity" }, { opacity = "0.88 0.82" })
+o.window({ tag = "terminal" }, { opacity = "0.88 0.72" })
+o.window({ tag = "firefox-based-browser" }, { opacity = "0.88 0.82" })
+o.window({ tag = "chromium-based-browser" }, { opacity = "0.88 0.82" })
+
+-- Omarchy pins steam and Unity at opacity 1 via class rules, so both need the
+-- default-opacity tag dropped along with their own opacity.
+o.window("steam.*", { tag = "-default-opacity", opacity = "0.72 0.62" })
+o.window("^(Unity|unityhub)$", { tag = "-default-opacity", opacity = "0.88 0.82" })
+
+-- hyprglass is not installed on this machine (hyprctl plugin list is empty) and
+-- plugin config has no Lua equivalent yet, so the old plugin:hyprglass block is
+-- kept here verbatim for whenever the plugin comes back.
 --
---     -- Change to niri-like side-scrolling layout.
---     layout = "scrolling",
---   },
--- })
-
--- https://wiki.hypr.land/Configuring/Basics/Variables/#decoration
--- hl.config({
---   decoration = {
---     -- Use round window corners.
---     rounding = 8,
+-- plugin:hyprglass {
+--     enabled = true
+--     default_theme = dark
 --
---     -- Dim unfocused windows (0.0 = no dim, 1.0 = fully dimmed).
---     dim_inactive = true,
---     dim_strength = 0.15,
---   },
--- })
-
--- https://wiki.hypr.land/Configuring/Basics/Variables/#animations
--- hl.config({
---   animations = {
---     -- Disable all animations.
---     enabled = false,
---   },
--- })
-
--- https://wiki.hypr.land/Configuring/Basics/Variables/#layout
--- hl.config({
---   layout = {
---     -- Avoid overly wide single-window layouts on wide screens.
---     single_window_aspect_ratio = { 1, 1 },
---   },
--- })
-
--- https://wiki.hypr.land/Configuring/Layouts/Scrolling-Layout/
--- hl.config({
---   scrolling = {
---     -- See only one column per screen instead of two.
---     column_width = 0.97,
---   },
--- })
+--     glass_opacity = 1.2
+--     blur_strength = 0.8
+--     blur_iterations = 4
+--     tint_color = 0xffffff00
+--
+--     edge_thickness = 0.008
+--     refraction_strength = 3.2
+--     chromatic_aberration = 0.4
+--     fresnel_strength = 1.0
+--     lens_distortion = 4.0
+--
+--     brightness = 1.1
+--     contrast = 1.33
+--     saturation = 1.0
+--     vibrancy = 0.0
+--     vibrancy_darkness = 0.0
+--     adaptive_dim = 0.0
+--     adaptive_boost = 0.0
+--
+--     layers {
+--         enabled = 1
+--         namespaces = waybar, walker
+--     }
+-- }

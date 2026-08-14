@@ -1,14 +1,15 @@
 -- See https://wiki.hypr.land/Configuring/Basics/Monitors/
 -- List current monitors and supported resolutions with: hyprctl monitors all
 
-local omarchy_gdk_scale = 2
-local omarchy_monitor_scale = "auto"
+hl.env("GDK_SCALE", "1")
 
-hl.env("GDK_SCALE", tostring(omarchy_gdk_scale))
-hl.monitor({ output = "", mode = "preferred", position = "auto", scale = omarchy_monitor_scale })
-
--- Configure a specific monitor.
--- hl.monitor({ output = "DP-2", mode = "2560x1440@144", position = "0x0", scale = 1 })
-
--- Portrait/rotated secondary monitor (transform: 1 = 90°, 3 = 270°).
--- hl.monitor({ output = "DP-2", mode = "preferred", position = "auto", scale = 1, transform = 1 })
+hl.monitor({
+  output = "desc:Iiyama North America PL2463H",
+  mode = "1920x1080@60",
+  position = "-1080x-60",
+  scale = 1,
+  transform = 1,
+})
+hl.monitor({ output = "desc:ASUSTek COMPUTER INC VG27A", mode = "2560x1440@165", position = "0x0", scale = 1 })
+hl.monitor({ output = "desc:BNQ BenQ GL2250H", mode = "1920x1080@60", position = "2560x360", scale = 1 })
+hl.monitor({ output = "", mode = "preferred", position = "auto", scale = 1 })
