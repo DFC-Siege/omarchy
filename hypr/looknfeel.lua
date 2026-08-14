@@ -64,7 +64,7 @@ if hl.plugin.hyprglass then
 	-- Hyprland auto-reloads and the plugin repaints instantly.
 	-- (A default_preset would silently override most of these.)
 	hyprglass.config({
-		enabled = true,
+		enabled = false,
 		default_theme = "dark",
 
 		-- material
