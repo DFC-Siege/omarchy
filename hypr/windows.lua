@@ -3,6 +3,9 @@
 
 o.window(".*", { idle_inhibit = "fullscreen" })
 
+-- A user fastfetch config disables omarchy-launch-about's content fit, so size it here
+o.window("org.omarchy.about", { size = { 780, 650 } })
+
 o.window("^(steam)$", { tile = true })
 o.window({ class = "^(steam)$", title = "^()$" }, { stay_focused = true, min_size = { 1, 1 } })
 
