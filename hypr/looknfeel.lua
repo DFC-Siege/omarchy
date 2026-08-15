@@ -49,7 +49,7 @@ if hl.plugin.hyprglass then
 		enabled = true,
 		default_theme = "dark",
 
-		glass_opacity = 1.2,
+		glass_opacity = 1.1,
 		blur_strength = 0.8,
 		blur_iterations = 4,
 		tint_color = 0xffffff00,
@@ -57,10 +57,10 @@ if hl.plugin.hyprglass then
 		edge_thickness = 0.008,
 		refraction_strength = 3.2,
 		chromatic_aberration = 0.4,
-		fresnel_strength = 1.0,
-		lens_distortion = 4.0,
+		fresnel_strength = 0.6,
+		lens_distortion = 2.0,
 
-		brightness = 1.1,
+		brightness = 1.05,
 		contrast = 1.33,
 		saturation = 1.0,
 		vibrancy = 0.0,
