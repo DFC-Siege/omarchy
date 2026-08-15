@@ -11,5 +11,8 @@ island-radius = 32
 background-alpha = 0.4
 scrim-alpha = 0.0
 
+[popups]
+background-alpha = 0.5
+
 [font]
 base-size = 13
