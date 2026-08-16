@@ -20,6 +20,9 @@
           "id": "omarchy.weather"
         },
         {
+          "id": "crmne.mpris"
+        },
+        {
           "id": "omarchy.system-update"
         }
       ],
@@ -34,6 +37,9 @@
       "right": [
         {
           "id": "dsilvaba.tray"
+        },
+        {
+          "id": "hass"
         },
         {
           "id": "glafeara.wireguard"

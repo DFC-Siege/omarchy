@@ -8,11 +8,11 @@ island-padding-y = 2
 island-radius = 32
 
 [menu]
-background-alpha = 0.4
+background-alpha = 0.6
 scrim-alpha = 0.0
 
 [popups]
-background-alpha = 0.4
+background-alpha = 0.9
 
 [font]
 base-size = 13

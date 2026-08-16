@@ -1,0 +1,28 @@
+{
+  "baseUrl": "https://homelab.siege.observer",
+  "demoMode": false,
+  "favorites": [
+    "light.192_168_1_90",
+    "light.face_light",
+    "light.wall_light",
+    "switch.bot_socket_1",
+    "switch.top_socket_1"
+  ],
+  "demoFavorites": [
+    "light.living_room_lamp",
+    "fan.living_room_ceiling_fan",
+    "climate.living_room_thermostat",
+    "media_player.living_room_tv",
+    "scene.living_room_movie_night",
+    "light.kitchen_pendant",
+    "switch.kitchen_coffee_maker",
+    "sensor.kitchen_temperature",
+    "cover.garage_door",
+    "lock.garage_side_door"
+  ],
+  "groupByArea": false,
+  "showEntityIcons": true,
+  "selectedTab": "favorites",
+  "displayNameOverrides": {},
+  "iconOverrides": {}
+}
