@@ -3,13 +3,12 @@
 
 hl.env("GDK_SCALE", "1")
 
+hl.monitor({ output = "desc:Samsung Display Corp. 0x414D", mode = "3456x2160@60", position = "0x740", scale = 2 })
+hl.monitor({ output = "desc:Dell Inc. DELL U3415W", mode = "3440x1440@59.97", position = "1728x560", scale = 1 })
 hl.monitor({
-	output = "desc:Iiyama North America PL2463H",
-	mode = "1920x1080@60",
-	position = "-1080x-60",
+	output = "desc:Dell Inc. DELL U2518D",
+	mode = "2560x1440@59.95",
+	position = "5168x0",
 	scale = 1,
-	transform = 1,
+	transform = 3,
 })
-hl.monitor({ output = "desc:ASUSTek COMPUTER INC VG27A", mode = "2560x1440@165", position = "0x0", scale = 1 })
-hl.monitor({ output = "desc:BNQ BenQ GL2250H", mode = "1920x1080@60", position = "2560x360", scale = 1 })
-hl.monitor({ output = "", mode = "preferred", position = "auto", scale = 1.25 })
