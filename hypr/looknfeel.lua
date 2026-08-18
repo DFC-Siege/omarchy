@@ -29,6 +29,11 @@ hl.config({
 	dwindle = {
 		preserve_split = false,
 	},
+
+	layout = {
+		single_window_aspect_ratio = { 16, 9 },
+		single_window_aspect_ratio_tolerance = 0.1,
+	},
 })
 
 hl.animation({ leaf = "workspaces", enabled = true, speed = 4, bezier = "easeOutQuint", style = "slidefade" })
@@ -61,7 +66,7 @@ if hl.plugin.hyprglass then
 		lens_distortion = 2.0,
 
 		brightness = 1.05,
-		contrast = 1.33,
+		contrast = 1.4,
 		saturation = 1.0,
 		vibrancy = 0.0,
 		vibrancy_darkness = 0.0,
