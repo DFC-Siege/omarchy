@@ -17,8 +17,10 @@ o.window({ class = "^(Unity)$", title = "^(Unity.*Hub)$" }, { float = true, cent
 o.window({ class = "^(Unity)$", title = "^(Unity License.*)$" }, { float = true })
 o.window({ class = "^(Unity)$", title = "^(Importing.*)$" }, { float = true })
 
--- Stop tooltip/dropdown focus steal
-o.window({ class = "^(Unity)$", title = "^$" }, { no_focus = true })
+-- Stop tooltip/dropdown focus steal without making the window unfocusable
+-- forever: Unity's XWayland windows map with an empty title and set it later,
+-- so no_focus stranded real windows on top with no way to focus or move them.
+o.window({ class = "^(Unity)$", title = "^$" }, { no_initial_focus = true })
 o.window({ class = "^(Unity)$", title = "^(.*dropdown.*)$" }, { no_initial_focus = true })
 
 -- Kill blur glitches, and fix the zero-size splash
