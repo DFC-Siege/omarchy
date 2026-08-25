@@ -53,10 +53,18 @@ hl.unbind("SUPER + SHIFT + RIGHT")
 hl.unbind("SUPER + SHIFT + UP")
 hl.unbind("SUPER + SHIFT + DOWN")
 
-o.bind("SUPER + SHIFT + H", "Move window left", function() smart_move.move("l") end)
-o.bind("SUPER + SHIFT + J", "Move window down", function() smart_move.move("d") end)
-o.bind("SUPER + SHIFT + K", "Move window up", function() smart_move.move("u") end)
-o.bind("SUPER + SHIFT + L", "Move window right", function() smart_move.move("r") end)
+o.bind("SUPER + SHIFT + H", "Move window left", function()
+	smart_move.move("l")
+end)
+o.bind("SUPER + SHIFT + J", "Move window down", function()
+	smart_move.move("d")
+end)
+o.bind("SUPER + SHIFT + K", "Move window up", function()
+	smart_move.move("u")
+end)
+o.bind("SUPER + SHIFT + L", "Move window right", function()
+	smart_move.move("r")
+end)
 
 -- Resize windows
 o.bind("SUPER + semicolon", "Shrink window width", hl.dsp.window.resize({ x = -100, y = 0, relative = true }))
@@ -71,6 +79,19 @@ o.bind(
 	"Move window to scratchpad",
 	hl.dsp.window.move({ workspace = "special:scratchpad", follow = false })
 )
+
+local function plain_scratchpad()
+	hl.workspace_rule({
+		workspace = "special:scratchpad",
+		on_created_empty = "",
+		gaps_in = 8,
+		gaps_out = { top = 16, right = 16, bottom = 16, left = 16 },
+	})
+end
+
+plain_scratchpad()
+hl.on("monitor.layout_changed", plain_scratchpad)
+hl.on("monitor.focused", plain_scratchpad)
 
 -- Screenshots and screen recording (moved from PRINT to P combinations)
 hl.unbind("PRINT")

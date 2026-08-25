@@ -3,6 +3,8 @@
 
 o.window(".*", { idle_inhibit = "fullscreen" })
 
+o.window({ workspace = "special:scratchpad" }, { tag = "+hyprglass_disabled" })
+
 -- A user fastfetch config disables omarchy-launch-about's content fit, so size it here
 o.window("org.omarchy.about", { size = { 780, 650 } })
 

@@ -59,10 +59,10 @@ if hl.plugin.hyprglass then
 		blur_iterations = 4,
 		tint_color = 0xffffff00,
 
-		edge_thickness = 0.008,
-		refraction_strength = 3.2,
+		edge_thickness = 0.006,
+		refraction_strength = 1.2,
 		chromatic_aberration = 0.4,
-		fresnel_strength = 0.6,
+		fresnel_strength = 0.2,
 		lens_distortion = 2.0,
 
 		brightness = 1.05,
