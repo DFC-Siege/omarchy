@@ -22,6 +22,10 @@ hl.config({
 		},
 	},
 
+	render = {
+		expand_undersized_textures = false,
+	},
+
 	animations = {
 		enabled = true,
 	},
