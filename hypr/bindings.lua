@@ -6,7 +6,7 @@ local smart_move = require("hypr.smart_move")
 -- Apps
 o.bind("SUPER + E", "File manager", { omarchy = "nautilus" })
 o.bind("SUPER + B", "Browser", { launch = "zen-browser --new-window" })
-o.bind("SUPER + D", "Docker", { tui = "lazydocker" })
+o.bind("SUPER + D", "Podman", { tui = "podman-tui" })
 o.bind("SUPER + A", "WhatsApp", { webapp = "https://web.whatsapp.com/" })
 
 hl.unbind("SUPER + SHIFT + B") -- was: Browser
