@@ -4,7 +4,7 @@
 hl.env("GDK_SCALE", "1")
 
 hl.monitor({
-	output = "desc:Iiyama North America PL2463H",
+	output = "desc:iiyama Corporation PL2463H",
 	mode = "1920x1080@60",
 	position = "-1080x-60",
 	scale = 1,
