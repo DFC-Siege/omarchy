@@ -1,7 +1,16 @@
+DEV_NET=devnet
+
+devnet_ensure() {
+    docker network exists "$DEV_NET" 2>/dev/null || docker network create "$DEV_NET" >/dev/null
+}
+
 build_php7() {
     docker build -t php7-dev - << 'EOF'
 FROM php:7.4-cli
-RUN apt-get update && \
+
+RUN echo 'deb http://archive.debian.org/debian bullseye main' > /etc/apt/sources.list && \
+    echo 'Acquire::Check-Valid-Until "false";' > /etc/apt/apt.conf.d/99no-check-valid && \
+    apt-get update && \
     apt-get install -y zip unzip libzip-dev libpng-dev libjpeg-dev libfreetype6-dev && \
     docker-php-ext-configure gd --with-freetype --with-jpeg && \
     docker-php-ext-install zip gd exif pdo_mysql mysqli && \
@@ -15,19 +24,25 @@ php7() {
         echo "Building php7-dev image..."
         build_php7
     fi
-    
+
+    devnet_ensure
+
     docker run -it --rm \
         -v "$(pwd):/workspace" \
         -w /workspace \
         -p 8000:8000 \
-        --link mariadb-dev:mysql \
+        --network "$DEV_NET" \
         php7-dev \
         bash
 }
 
 mariadb_start() {
+    devnet_ensure
+
     docker run -d \
         --name mariadb-dev \
+        --network "$DEV_NET" \
+        --network-alias mysql \
         -e MYSQL_ROOT_PASSWORD=root \
         -e MYSQL_DATABASE=mydb \
         -p 3306:3306 \
@@ -42,15 +57,17 @@ mariadb_start() {
 }
 
 mariadb_phpmyadmin_start() {
+    devnet_ensure
+
     docker run -d \
         --name phpmyadmin-dev \
-        --link mariadb-dev:db \
+        --network "$DEV_NET" \
         -e PMA_HOST=mariadb-dev \
         -e PMA_USER=root \
         -e PMA_PASSWORD=root \
         -p 8080:80 \
         phpmyadmin/phpmyadmin:latest
-    
+
     echo "phpMyAdmin available at: http://localhost:8080"
     echo "Username: root"
     echo "Password: root"
