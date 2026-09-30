@@ -8,6 +8,10 @@
           "id": "omarchy.indicators"
         },
         {
+          "id": "omacom.elsewhen",
+          "zones": "Amsterdam|Europe/Amsterdam, Delhi|Asia/Kolkata, Tokyo|Asia/Tokyo, Los Angeles|America/Los_Angeles, New York|America/New_York"
+        },
+        {
           "format": "dddd HH:mm",
           "formatAlt": "d MMMM 'W'ww yyyy",
           "id": "omarchy.clock",
@@ -25,7 +29,7 @@
       ],
       "left": [
         {
-          "id": "omarchy.menu"
+          "id": "skal.menu"
         },
         {
           "id": "omarchy.workspaces"
@@ -69,5 +73,11 @@
     "screensaver": 150
   },
   "plugins": [],
-  "version": 1
+  "version": 1,
+  "disabledPlugins": [
+    "omarchy.menu"
+  ],
+  "cloneSourceRestores": [
+    "skal.menu"
+  ]
 }
