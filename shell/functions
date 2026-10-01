@@ -48,7 +48,7 @@ mariadb_start() {
         -p 3306:3306 \
         -v mariadb_data:/var/lib/mysql \
         -v "$(pwd):/dumps" \
-        --tmpfs /tmp:rw,noexec,nosuid,size=2g \
+        --tmpfs /tmp:rw,noexec,nosuid,size=8g \
         mariadb:10.11 \
         --innodb-buffer-pool-size=1G \
         --max-allowed-packet=1G \
