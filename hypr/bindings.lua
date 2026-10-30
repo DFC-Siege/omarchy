@@ -17,7 +17,7 @@ hl.unbind("SUPER + T") -- was: Toggle window floating/tiling
 o.bind("SUPER + T", "Activity", { tui = "btop" })
 
 -- Menus
-o.bind("SUPER + Super_L", "Apps menu", "omarchy-menu toggle apps")
+o.bind("SUPER + Super_L", "Apps menu", "omarchy-menu toggle apps", { release = true })
 
 hl.unbind("SUPER + ALT + K") -- was: Tmux keybindings
 o.bind("SUPER + ALT + K", "Keybindings", "omarchy-menu-keybindings")
