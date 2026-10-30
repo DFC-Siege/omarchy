@@ -23,6 +23,11 @@ require("hypr.looknfeel")
 require("hypr.autostart")
 require("hypr.windows")
 
+local hostname = io.open("/etc/hostname"):read("l")
+if io.open(os.getenv("HOME") .. "/.config/hypr/hosts/" .. hostname .. ".lua") then
+	require("hypr.hosts." .. hostname)
+end
+
 -- Toggle config flags dynamically.
 require("default.hypr.toggles")
 
