@@ -7,6 +7,7 @@ local smart_move = require("hypr.smart_move")
 o.bind("SUPER + E", "File manager", { omarchy = "nautilus" })
 o.bind("SUPER + B", "Browser", { launch = "zen-browser --new-window" })
 o.bind("SUPER + D", "Podman", { tui = "podman-tui" })
+hl.unbind("SUPER + A") -- was: Select all
 o.bind("SUPER + A", "WhatsApp", { webapp = "https://web.whatsapp.com/" })
 
 hl.unbind("SUPER + SHIFT + B") -- was: Browser
@@ -89,9 +90,20 @@ local function plain_scratchpad()
 	})
 end
 
+-- qconsole rewrites the scratchpad rule (seeding omarchy-agent) on each of these, so reassert after it
 plain_scratchpad()
-hl.on("monitor.layout_changed", plain_scratchpad)
-hl.on("monitor.focused", plain_scratchpad)
+for _, event in ipairs({
+	"monitor.layout_changed",
+	"monitor.focused",
+	"workspace.special_active",
+	"workspace.move_to_monitor",
+	"window.open",
+	"window.destroy",
+	"window.move_to_workspace",
+	"window.update_rules",
+}) do
+	hl.on(event, plain_scratchpad)
+end
 
 -- Screenshots and screen recording (moved from PRINT to P combinations)
 hl.unbind("PRINT")

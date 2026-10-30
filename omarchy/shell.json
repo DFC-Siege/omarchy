@@ -8,7 +8,7 @@
           "id": "omarchy.indicators"
         },
         {
-          "id": "omacom.elsewhen",
+          "id": "omarchy.elsewhen",
           "zones": "Amsterdam|Europe/Amsterdam, Delhi|Asia/Kolkata, Tokyo|Asia/Tokyo, Los Angeles|America/Los_Angeles, New York|America/New_York"
         },
         {
@@ -16,9 +16,6 @@
           "formatAlt": "d MMMM 'W'ww yyyy",
           "id": "omarchy.clock",
           "verticalFormat": "HH\n—\nmm"
-        },
-        {
-          "id": "omarchy.keyboard-layout"
         },
         {
           "id": "omarchy.weather"
@@ -36,6 +33,9 @@
         }
       ],
       "right": [
+        {
+          "id": "omarchy.keyboard-layout"
+        },
         {
           "id": "dsilvaba.tray"
         },
