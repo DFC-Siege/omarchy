@@ -37,7 +37,8 @@ hl.animation({ leaf = "fadeSwitch", enabled = true, speed = 2.5, bezier = "easeO
 
 o.window({ tag = "default-opacity" }, { opacity = "0.88 0.82" })
 o.window({ tag = "terminal" }, { opacity = "0.88 0.72" })
-o.window({ tag = "firefox-based-browser" }, { opacity = "0.88 0.82" })
+-- o.window({ tag = "firefox-based-browser" }, { opacity = "0.88 0.82" })
+o.window({ tag = "firefox-based-browser" }, { opacity = "1.0 1.0" })
 o.window({ tag = "chromium-based-browser" }, { opacity = "0.88 0.82" })
 o.window("steam.*", { tag = "-default-opacity", opacity = "0.88 0.82" })
 o.window("^(Unity|unityhub)$", { tag = "-default-opacity", opacity = "0.88 0.82" })
