@@ -10,3 +10,4 @@ export PATH="$HOME/.config/emacs/bin:$PATH"
 export ANDROID_HOME="$HOME/Android/Sdk"
 export PATH="$PATH:$ANDROID_HOME/platform-tools"
 export CAPACITOR_ANDROID_STUDIO_PATH="/opt/android-studio/bin/studio.sh"
+unset ANDROID_SDK_ROOT

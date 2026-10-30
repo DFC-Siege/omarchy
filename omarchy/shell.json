@@ -8,9 +8,9 @@
           "id": "omarchy.indicators"
         },
         {
-          "format": "dddd HH:mm",
-          "formatAlt": "d MMMM 'W'ww yyyy",
           "id": "omarchy.clock",
+          "format": "dddd h:mm AP",
+          "formatAlt": "d MMMM 'W'ww yyyy",
           "verticalFormat": "HH\n—\nmm"
         },
         {
@@ -70,6 +70,10 @@
   },
   "plugins": [],
   "version": 1,
-  "disabledPlugins": ["omarchy.menu"],
-  "cloneSourceRestores": ["skal.menu"]
+  "disabledPlugins": [
+    "omarchy.menu"
+  ],
+  "cloneSourceRestores": [
+    "skal.menu"
+  ]
 }

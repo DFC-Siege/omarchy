@@ -8,7 +8,7 @@ return {
       },
       formatters = {
         pint = {
-          command = "vendor/bin/pint",
+          cwd = require("conform.util").root_file({ "composer.json" }),
         },
       },
     },
