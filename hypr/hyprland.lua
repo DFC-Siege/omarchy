@@ -13,6 +13,13 @@ dofile((os.getenv("OMARCHY_PATH") or "/usr/share/omarchy") .. "/default/hypr/boo
 -- Load Omarchy defaults.
 require("default.hypr.omarchy")
 
+-- Local hyprglass build with the rotated-monitor fix; hyprpm's copy is disabled
+-- on machines that have it.
+local hyprglass_build = os.getenv("HOME") .. "/projects/hyprglass/hyprglass.so"
+if io.open(hyprglass_build) then
+	hl.plugin.load(hyprglass_build)
+end
+
 -- Put your personal overrides in these files. They're loaded after Omarchy's
 -- defaults so package updates can improve the defaults without rewriting your
 -- ~/.config/hypr files.
