@@ -64,12 +64,8 @@
     },
     "position": "top"
   },
-  "cloneSourceRestores": [
-    "skal.menu"
-  ],
-  "disabledPlugins": [
-    "omarchy.menu"
-  ],
+  "cloneSourceRestores": ["skal.menu"],
+  "disabledPlugins": ["omarchy.menu"],
   "idle": {
     "lock": 300,
     "screensaver": 150
