@@ -42,3 +42,6 @@
 hl.env("GDK_SCALE", "1")
 
 hl.monitor({ output = "", mode = "preferred", position = "auto", scale = 1.25 })
+
+-- Omarchy's clamshell watcher only reads the internal panel's rule from this file, by port name
+hl.monitor({ output = "eDP-1", mode = "3456x2160@60", position = "0x740", scale = 2 })
